@@ -1,6 +1,7 @@
 (() => {
+  let myEvents = [];
+
   const observer = new MutationObserver((mutationsList) => {
-    let events = []
     const mutationBtns = document.querySelectorAll('[role="button"]');
     const eventElements = [...mutationBtns].filter(
       (el) => el.hasAttribute("data-eventchip") && el.childNodes.length === 3
@@ -17,27 +18,36 @@
             name: arr[1],
             author: arr[2],
             place: arr[3],
-            date: arr[4]
+            date: arr[4],
           };
         });
-        events.push(data)
+        pushUniqueObject(myEvents, data);
       });
-
     }
-
-    console.log(events)
   });
 
-  // Define the target node where you expect the elements to appear
   const targetNode = document.body;
 
-  // Configure and start observing mutations
   const observerConfig = {
-    childList: true, // Watch for changes in the child nodes
-    subtree: true, // Include all descendant nodes
+    childList: true,
+    subtree: true,
   };
 
   observer.observe(targetNode, observerConfig);
+
+  function pushUniqueObject(arr, obj) {
+    const isDuplicate = arr.some(
+      (item) => item.time === obj.time && item.date === obj.date
+    );
+
+    if (!isDuplicate) {
+      arr.push(obj);
+    }
+  }
+
+  setTimeout(() => myEvents.length && console.log(myEvents), 2000);
+})();
+
 
   // let youtubeLeftControls, youtubePlayer;
   // let currentVideo = "";
@@ -105,11 +115,4 @@
   // });
 
   // newVideoLoaded();
-})();
 
-const getTime = (t) => {
-  var date = new Date(0);
-  date.setSeconds(t);
-
-  return date.toISOString().substr(11, 8);
-};

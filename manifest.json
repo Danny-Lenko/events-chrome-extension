@@ -3,14 +3,21 @@
   "version": "0.1.0",
   "description": "Is the Google & Microsoft calendar pages events provider",
   "permissions": ["storage", "tabs"],
-  "host_permissions": ["https://*.google.com/calendar/*"],
+  "host_permissions": [
+    "https://*.google.com/calendar/*",
+    "https://*outlook.live.com/calendar/*"
+  ],
   "background": {
     "service_worker": "background.js"
   },
   "content_scripts": [
     {
       "matches": ["https://*.google.com/calendar/*"],
-      "js": ["contentScript.js"]
+      "js": ["googleContentScript.js"]
+    },
+    {
+      "matches": ["https://outlook.live.com/calendar/*"],
+      "js": ["microContentScript.js"]
     }
   ],
   "action": {
