@@ -1,0 +1,26 @@
+{
+  "name": "Evening Eats Events",
+  "version": "0.1.0",
+  "description": "Is the Google & Microsoft calendar pages events provider",
+  "permissions": ["storage", "tabs"],
+  "host_permissions": ["https://*.google.com/calendar/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.google.com/calendar/*"],
+      "js": ["contentScript.js"]
+    }
+  ],
+  "action": {
+    "default_icon": {
+      "16": "assets/ext-icon.png",
+      "24": "assets/ext-icon.png",
+      "32": "assets/ext-icon.png"
+    },
+    "default_title": "Evening Eats Events",
+    "default_popup": "popup.html"
+  },
+  "manifest_version": 3
+}
