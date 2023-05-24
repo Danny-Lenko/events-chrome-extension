@@ -15,7 +15,7 @@
         info.forEach((item, i, arr) => {
           data = {
             time: arr[0],
-            name: arr[1],
+            details: arr[1],
             author: arr[2],
             place: arr[3],
             date: arr[4],

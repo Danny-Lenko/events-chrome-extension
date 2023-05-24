@@ -1,54 +1,64 @@
+let eventElements = [];
+let events = [];
+let counter = 1;
+
 (() => {
-   let myEvents = [];
+  eventElements = document.getElementsByClassName("Ki1Xx");
 
-   console.log('the micro calendar page')
- 
-   // const observer = new MutationObserver((mutationsList) => {
-   //   const mutationBtns = document.querySelectorAll('[role="button"]');
-   //   const eventElements = [...mutationBtns].filter(
-   //     (el) => el.hasAttribute("data-eventchip") && el.childNodes.length === 3
-   //   );
- 
-   //   if (eventElements.length) {
-   //     eventElements.forEach((element) => {
-   //       let data;
-   //       const info = element.children[0].textContent.split(", ");
- 
-   //       info.forEach((item, i, arr) => {
-   //         data = {
-   //           time: arr[0],
-   //           name: arr[1],
-   //           author: arr[2],
-   //           place: arr[3],
-   //           date: arr[4],
-   //         };
-   //       });
-   //       pushUniqueObject(myEvents, data);
-   //     });
-   //   }
-   // });
- 
-   // const targetNode = document.body;
- 
-   // const observerConfig = {
-   //   childList: true,
-   //   subtree: true,
-   // };
- 
-   // observer.observe(targetNode, observerConfig);
- 
-   // function pushUniqueObject(arr, obj) {
-   //   const isDuplicate = arr.some(
-   //     (item) => item.time === obj.time && item.date === obj.date
-   //   );
- 
-   //   if (!isDuplicate) {
-   //     arr.push(obj);
-   //   }
-   // }
- 
-   // setTimeout(() => myEvents.length && console.log(myEvents), 2000);
+  if (eventElements.length) {
+    executeProvider();
+    // wait for two seconds for async components to render
+  } else {
+    counter++;
+    setTimeout(() => {
+      eventElements = document.getElementsByClassName("Ki1Xx");
+      if (eventElements.length) {
+        executeProvider();
+        // wait another two second if the first wait was too short
+      } else {
+        counter++;
+        setTimeout(() => {
+          eventElements = document.getElementsByClassName("Ki1Xx");
+          if (eventElements.length) {
+            executeProvider();
+          }
+        }, 2000);
+      }
+    }, 2000);
+  }
+})();
 
- })();
- 
- 
+const executeProvider = () => {
+  [...eventElements].forEach((element) => {
+    const info = element.children[0].ariaLabel;
+    const { time, date, details } = editContent(info);
+
+    events.push({
+      time,
+      date,
+      details,
+    });
+  });
+  console.log(events);
+  console.log(counter);
+
+  chrome.runtime.sendMessage({ events });
+};
+
+const editContent = (initialContent) => {
+  const parts = initialContent.split(": ")[1].split(" ");
+  const time = parts.slice(0, 4).join(" ");
+  const date = parts.slice(5, 9).join(" ");
+  const details = parts
+    .slice(9)
+    .filter(
+      (part) =>
+        part !== "событие" &&
+        part !== "отображается" &&
+        part !== "как" &&
+        part !== "Busy"
+    )
+    .join(" ");
+
+  return { time, date, details };
+};
