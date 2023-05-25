@@ -1,44 +1,30 @@
 import { getActiveTabURL } from "./utils.js";
 
-const container = document.getElementsByClassName("container")[0];
-
 document.addEventListener("DOMContentLoaded", async () => {
   const activeTab = await getActiveTabURL();
+  const container = document.getElementsByClassName("container")[0];
+  const fastSuccessMsg =
+    '<div class="title">Reading page content:</div><div class="result"> This page events are sent</div>';
+  const slowSuccessMsg =
+    '<div class="title">Reading page content:</div><div class="result">This page events are sent</div><div class="title">Yet another try to read:</div><div class="result">Page events are sent</div>';
+  const failMsg = '<div class="title">Failed sending events</div>';
 
   if (
     activeTab.url.includes("google.com/calendar") ||
     activeTab.url.includes("outlook.live.com/calendar")
   ) {
-    return;
+    chrome.storage.sync.get("counter", (result) => {
+      const counterValue = result.counter;
+      console.log(counterValue);
+      container.innerHTML =
+        counterValue == 0 || counterValue == 1
+          ? fastSuccessMsg
+          : counterValue == 2
+          ? slowSuccessMsg
+          : failMsg;
+    });
   } else {
     container.innerHTML =
       '<div class="title">This is not a calendar page.</div>';
   }
 });
-
-function updatePopupContent(events) {
-  // const eventsContainer = document.getElementById("ti");
-  const container = document.getElementsByClassName("container")[0];
-  container.innerHTML = '<div class="title">finally got them</div>';
-  ; // Clear previous content
-
-  events.forEach((event) => {
-    const eventElement = document.createElement("div");
-    eventElement.textContent = `Time: ${event.time}, Date: ${event.date}, Details: ${event.details}`;
-    container.appendChild(eventElement);
-  });
-}
-
-chrome.runtime.onMessage.addListener((message) => {
-  const { events } = message;
-  updatePopupContent(events);
-});
-
-
-// chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-//   console.log('here goes the message:', message)
-//   // container.innerHTML = message
-//   // sendResponse({
-//   //     data: "I am fine, thank you. How is life in the background?"
-//   // }); 
-// });

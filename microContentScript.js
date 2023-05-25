@@ -1,9 +1,10 @@
 let eventElements = [];
 let events = [];
-let counter = 1;
+let counter = 0;
 
 (() => {
   eventElements = document.getElementsByClassName("Ki1Xx");
+  chrome.storage.sync.set({ counter: null });
 
   if (eventElements.length) {
     executeProvider();
@@ -41,8 +42,7 @@ const executeProvider = () => {
   });
   console.log(events);
   console.log(counter);
-
-  chrome.runtime.sendMessage({ events });
+  chrome.storage.sync.set({ counter });
 };
 
 const editContent = (initialContent) => {

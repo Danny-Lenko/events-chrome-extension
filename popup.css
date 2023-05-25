@@ -3,12 +3,16 @@
   color: #314d3e;
 }
 
-/* .title {
+.title {
   font-size: 14px;
-  font-weight: bold;
   padding: 8px;
 }
-
+.result {
+  font-size: 14px;
+  font-weight: bold;
+  padding: 0 8px 8px 16px;
+}
+/*
 .textbox {
   width: 100%;
   font-size: 12px;
