@@ -1,35 +1,64 @@
-let eventElements = [];
+let eventNodes = [];
 let events = [];
 let counter = 0;
+let controller = 0;
+
+const observer = new MutationObserver((mutationsList) => {
+  const button = document.getElementsByClassName("sh4OF")[0];
+
+  if (button) {
+    button.addEventListener("click", () => {
+      setTimeout(() => {
+        eventNodes = document.getElementsByClassName("Ki1Xx");
+        if (controller < 1) {
+          controller++;
+          executeProvider(eventNodes);
+        }
+      }, 1000);
+      controller = 0;
+    });
+  }
+});
+
+const targetNode = document.body;
+
+const observerConfig = {
+  childList: true,
+  subtree: true,
+};
 
 (() => {
-  eventElements = document.getElementsByClassName("Ki1Xx");
+  eventNodes = document.getElementsByClassName("Ki1Xx");
   chrome.storage.sync.set({ counter: null });
 
-  if (eventElements.length) {
-    executeProvider();
+  if (eventNodes.length) {
+    executeProvider(eventNodes);
     // wait for two seconds for async components to render
   } else {
     counter++;
     setTimeout(() => {
-      eventElements = document.getElementsByClassName("Ki1Xx");
-      if (eventElements.length) {
-        executeProvider();
+      eventNodes = document.getElementsByClassName("Ki1Xx");
+      if (eventNodes.length) {
+        executeProvider(eventNodes);
         // wait another two second if the first wait was too short
       } else {
         counter++;
         setTimeout(() => {
-          eventElements = document.getElementsByClassName("Ki1Xx");
-          if (eventElements.length) {
+          eventNodes = document.getElementsByClassName("Ki1Xx");
+          if (eventNodes.length) {
             executeProvider();
           }
         }, 2000);
       }
     }, 2000);
   }
+
+  observer.observe(targetNode, observerConfig);
 })();
 
-const executeProvider = () => {
+const executeProvider = (eventElements) => {
+  events = [];
+
   [...eventElements].forEach((element) => {
     const info = element.children[0].ariaLabel;
     const { time, date, details } = editContent(info);
@@ -40,6 +69,7 @@ const executeProvider = () => {
       details,
     });
   });
+
   console.log(events);
   console.log(counter);
   chrome.storage.sync.set({ counter });
