@@ -4,21 +4,27 @@ let counter = 0;
 let controller = 0;
 
 const observer = new MutationObserver((mutationsList) => {
-  const button = document.getElementsByClassName("sh4OF")[0];
+  const saveButton = document.getElementsByClassName("sh4OF")[0];
+  const deleteButton = document.getElementsByClassName("jya0z")[0];
 
-  if (button) {
-    button.addEventListener("click", () => {
-      setTimeout(() => {
-        eventNodes = document.getElementsByClassName("Ki1Xx");
-        if (controller < 1) {
-          controller++;
-          executeProvider(eventNodes);
-        }
-      }, 1000);
-      controller = 0;
-    });
+  if (saveButton) {
+    saveButton.addEventListener("click", () => trackEventsChange());
+  }
+  if (deleteButton) {
+    deleteButton.addEventListener("click", () => trackEventsChange());
   }
 });
+
+const trackEventsChange = () => {
+  setTimeout(() => {
+    eventNodes = document.getElementsByClassName("Ki1Xx");
+    if (controller < 1) {
+      controller++;
+      executeProvider(eventNodes);
+    }
+  }, 1000);
+  controller = 0;
+};
 
 const targetNode = document.body;
 
@@ -46,7 +52,7 @@ const observerConfig = {
         setTimeout(() => {
           eventNodes = document.getElementsByClassName("Ki1Xx");
           if (eventNodes.length) {
-            executeProvider();
+            executeProvider(eventNodes);
           }
         }, 2000);
       }
