@@ -2,6 +2,17 @@ let eventNodes = [];
 let events = [];
 let counter = 0;
 let controller = 0;
+let previousState = [];
+let lastChange;
+
+// ========================================== The Mutatation observer
+
+const targetNode = document.body;
+
+const observerConfig = {
+  childList: true,
+  subtree: true,
+};
 
 const observer = new MutationObserver((mutationsList) => {
   const saveButton = document.getElementsByClassName("sh4OF")[0];
@@ -13,25 +24,45 @@ const observer = new MutationObserver((mutationsList) => {
   if (deleteButton) {
     deleteButton.addEventListener("click", () => trackEventsChange());
   }
+
+  for (const mutation of mutationsList) {
+    if (
+      mutation.addedNodes[0] &&
+      [...mutation.addedNodes[0].classList].includes("Ki1Xx")
+    ) {
+      trackEventsChange();
+    }
+  }
 });
+
+// =================================== Funtion tracks events changes and executes the comparison one
 
 const trackEventsChange = () => {
   setTimeout(() => {
     eventNodes = document.getElementsByClassName("Ki1Xx");
     if (controller < 1) {
       controller++;
+
       executeProvider(eventNodes);
+
+      const extraObj = findExtraObject(previousState, events);
+      const wipedObj = findExtraObject(events, previousState);
+
+      if (extraObj) {
+        console.log('New Event:', extraObj)
+      }
+
+      if (wipedObj) {
+        console.log('Removed:', wipedObj)
+      }
+
+      previousState = [...events];
     }
   }, 1000);
   controller = 0;
 };
 
-const targetNode = document.body;
-
-const observerConfig = {
-  childList: true,
-  subtree: true,
-};
+// =========================================== The Content Script
 
 (() => {
   eventNodes = document.getElementsByClassName("Ki1Xx");
@@ -62,6 +93,8 @@ const observerConfig = {
   observer.observe(targetNode, observerConfig);
 })();
 
+// ======================================== Funtions set the global events variable up
+
 const executeProvider = (eventElements) => {
   events = [];
 
@@ -76,8 +109,6 @@ const executeProvider = (eventElements) => {
     });
   });
 
-  console.log(events);
-  console.log(counter);
   chrome.storage.sync.set({ counter });
 };
 
@@ -98,3 +129,35 @@ const editContent = (initialContent) => {
 
   return { time, date, details };
 };
+
+// ====================================== Function compares the prev state events array and the new state one
+
+function findExtraObject(arrayOne, arrayTwo) {
+  const lengthOne = arrayOne.length;
+  const lengthTwo = arrayTwo.length;
+
+  if (lengthOne >= lengthTwo) {
+    return null;
+  }
+
+  for (let i = 0; i < lengthTwo; i++) {
+    let found = false;
+
+    for (let j = 0; j < lengthOne; j++) {
+      if (isEqual(arrayOne[j], arrayTwo[i])) {
+        found = true;
+        break;
+      }
+    }
+
+    if (!found) {
+      return arrayTwo[i];
+    }
+  }
+
+  return null;
+}
+
+function isEqual(obj1, obj2) {
+  return JSON.stringify(obj1) === JSON.stringify(obj2);
+}

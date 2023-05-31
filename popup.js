@@ -1,4 +1,4 @@
-import { getActiveTabURL } from "./utils.js";
+import { getActiveTabURL, findExtraObject } from "./utils.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const activeTab = await getActiveTabURL();
@@ -8,6 +8,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const slowSuccessMsg =
     '<div class="title">Reading page content:</div><div class="result">This page events are sent</div><div class="title">Yet another try to read:</div><div class="result">Page events are sent</div>';
   const failMsg = '<div class="title">Failed sending events</div>';
+
+  console.log(findExtraObject)
 
   if (
     activeTab.url.includes("google.com/calendar") ||
