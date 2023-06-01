@@ -2,8 +2,12 @@ let eventNodes = [];
 let events = [];
 let counter = 0;
 let controller = 0;
+
 let previousState = [];
 let lastChange;
+
+let weekIntervalNode;
+let weekIntervalContent;
 
 // ========================================== The Mutatation observer
 
@@ -15,22 +19,19 @@ const observerConfig = {
 };
 
 const observer = new MutationObserver((mutationsList) => {
-  const saveButton = document.getElementsByClassName("sh4OF")[0];
-  const deleteButton = document.getElementsByClassName("jya0z")[0];
-
-  if (saveButton) {
-    saveButton.addEventListener("click", () => trackEventsChange());
-  }
-  if (deleteButton) {
-    deleteButton.addEventListener("click", () => trackEventsChange());
-  }
-
   for (const mutation of mutationsList) {
     if (
       mutation.addedNodes[0] &&
       [...mutation.addedNodes[0].classList].includes("Ki1Xx")
     ) {
       trackEventsChange();
+    }
+
+    const weekGotChanged = !trackWeekIntervalChange(weekIntervalContent);
+    if (weekGotChanged) {
+      registerWeekChange();
+      console.log("week got changed");
+      readWeeklyInfo()
     }
   }
 });
@@ -49,11 +50,11 @@ const trackEventsChange = () => {
       const wipedObj = findExtraObject(events, previousState);
 
       if (extraObj) {
-        console.log('New Event:', extraObj)
+        console.log("New Event:", extraObj);
       }
 
       if (wipedObj) {
-        console.log('Removed:', wipedObj)
+        console.log("Removed:", wipedObj);
       }
 
       previousState = [...events];
@@ -62,34 +63,79 @@ const trackEventsChange = () => {
   controller = 0;
 };
 
-// =========================================== The Content Script
+// ================================ Functions track if week changes and registeres the change
 
-(() => {
-  eventNodes = document.getElementsByClassName("Ki1Xx");
-  chrome.storage.sync.set({ counter: null });
+const trackWeekIntervalChange = (prevState) => {
+  // const newIntervalNode = document.getElementsByClassName("YjxmP");
+  const newIntervalContent =
+    weekIntervalNode.length && weekIntervalNode[0].textContent;
+
+  if (!prevState) return true;
+
+  return prevState === newIntervalContent;
+};
+
+const registerWeekChange = () => {
+  if (controller < 1) {
+    controller++;
+
+    weekIntervalNode = document.getElementsByClassName("YjxmP");
+    weekIntervalContent =
+      weekIntervalNode.length && weekIntervalNode[0].textContent;
+  }
+  controller = 0;
+};
+
+// ===================================================================================================
+
+const readWeeklyInfo = () => {
+  getObservedNodes()
 
   if (eventNodes.length) {
     executeProvider(eventNodes);
-    // wait for two seconds for async components to render
+    previousState = [...events];
   } else {
     counter++;
+    // wait for two seconds for async components to render
     setTimeout(() => {
-      eventNodes = document.getElementsByClassName("Ki1Xx");
+      getObservedNodes()
+
       if (eventNodes.length) {
         executeProvider(eventNodes);
-        // wait another two second if the first wait was too short
+        previousState = [...events];
       } else {
         counter++;
+        // wait another two second if the first wait was too short
         setTimeout(() => {
-          eventNodes = document.getElementsByClassName("Ki1Xx");
+          const eventsGrid = document.getElementsByClassName("JWaNH");
+          getObservedNodes()
+
           if (eventNodes.length) {
             executeProvider(eventNodes);
+            previousState = [...events];
+          }
+          if (!eventNodes.length && eventsGrid.length) {
+            events = [];
+            previousState = [];
           }
         }, 2000);
       }
     }, 2000);
   }
+};
 
+const getObservedNodes = () => {
+  eventNodes = document.getElementsByClassName("Ki1Xx");
+  weekIntervalNode = document.getElementsByClassName("YjxmP");
+  weekIntervalContent =
+    weekIntervalNode.length && weekIntervalNode[0].textContent;
+}
+
+// =========================================== The Content Script
+
+(() => {
+  chrome.storage.sync.set({ counter: null });
+  readWeeklyInfo();
   observer.observe(targetNode, observerConfig);
 })();
 
@@ -135,6 +181,9 @@ const editContent = (initialContent) => {
 function findExtraObject(arrayOne, arrayTwo) {
   const lengthOne = arrayOne.length;
   const lengthTwo = arrayTwo.length;
+
+  console.log(arrayOne)
+  console.log(arrayTwo)
 
   if (lengthOne >= lengthTwo) {
     return null;
