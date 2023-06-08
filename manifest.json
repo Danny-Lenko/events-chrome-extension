@@ -5,7 +5,7 @@
   "permissions": ["storage", "tabs"],
   "host_permissions": [
     "https://*.google.com/calendar/*",
-    "https://*outlook.live.com/calendar/*"
+    "https://outlook.live.com/calendar/*"
   ],
   "background": {
     "service_worker": "background.js",
