@@ -2,13 +2,13 @@ let initialEvents = [];
 let events = [];
 let controller = 0;
 
-let weekDateNode;
-let weekDateContent;
+let weekNode;
+let weekNodeContent;
 
 const initialTimeout = 3000;
 const observerTimeout = initialTimeout + 1;
 
-const microsoftPrefix = "ms: ";
+const googlePrefix = "gl: ";
 
 // =========================================================== observer
 
@@ -22,14 +22,13 @@ const observerConfig = {
 const observer = new MutationObserver((mutationsList) => {
   trackEventsChange();
 
-  const weekGotChanged = !trackWeekIntervalChange(weekDateContent);
+  const weekGotChanged = !trackWeekIntervalChange(weekNodeContent);
   if (weekGotChanged) {
     observer.disconnect(); // ================== fixes objectionalbe requests bug
     registerWeekChange();
     setTimeout(() => {
       observer.observe(observerNode, observerConfig);
     }, 3000); // =============================== fixes objectionable requests bug
-    console.log("week got changed");
   }
 });
 
@@ -39,10 +38,9 @@ const observer = new MutationObserver((mutationsList) => {
   setTimeout(() => {
     getEvents();
     initialEvents = [...events];
-    console.log(initialEvents);
 
-    weekDateNode = document.getElementsByClassName("YjxmP");
-    weekDateContent = weekDateNode.length && weekDateNode[0].textContent;
+    weekNode = document.querySelectorAll('[jsname="ixxhSe"]')[0];
+    weekNodeContent = weekNode.getAttribute("data-start-date-key");
   }, initialTimeout);
 
   setTimeout(() => {
@@ -55,21 +53,29 @@ const observer = new MutationObserver((mutationsList) => {
 const getEvents = () => {
   events = [];
 
-  [...document.getElementsByClassName("Ki1Xx")].forEach((element) => {
-    const info = element.children[0].ariaLabel;
-    const content = editContentEng(info);
-    if (!content) return;
-    const { start, end, description, organizer, status, colorId } = content;
+  [...document.getElementsByClassName("ynRLnc")]
+    .filter((node) => {
+      const content = node.innerHTML.split(", ");
+      return (
+        content.length >= 5 &&
+        !content[2].match(/^calendar:/i) &&
+        !content[1].match(/^No title/i)
+      );
+    })
+    .forEach((node) => {
+      const content = editContent(node.innerHTML);
+      if (!content) return;
+      const { start, end, description, organizer, status, colorId } = content;
 
-    events.push({
-      start,
-      end,
-      description,
-      organizer,
-      status,
-      colorId,
+      events.push({
+        start,
+        end,
+        description,
+        organizer,
+        status,
+        colorId,
+      });
     });
-  });
 };
 
 // ============================================================= event changes listener and maintainer functions
@@ -165,11 +171,13 @@ function findEditedEvent(prevState, currentState) {
 // ========================================================== week changes listener and maintainer functions
 
 const trackWeekIntervalChange = (prevState) => {
-  const newIntervalContent = weekDateNode && weekDateNode[0].textContent;
+  const weekNode = document.querySelectorAll('[jsname="ixxhSe"]')[0];
+  const newNodeContent =
+    weekNode && weekNode.getAttribute("data-start-date-key");
 
   if (!prevState) return true;
 
-  return prevState === newIntervalContent;
+  return prevState === newNodeContent;
 };
 
 const registerWeekChange = () => {
@@ -179,92 +187,35 @@ const registerWeekChange = () => {
     getEvents();
     initialEvents = [...events];
 
-    weekDateNode = document.getElementsByClassName("YjxmP");
-    weekDateContent = weekDateNode.length && weekDateNode[0].textContent;
+    weekNode = document.querySelectorAll('[jsname="ixxhSe"]')[0];
+    weekNodeContent = weekNode && weekNode.getAttribute("data-start-date-key");
   }
   controller = 0;
 };
 
 // ============================================================= editor functions
 
-const editContentEng = (inputString) => {
-  if (!inputString) return;
+const editContent = (str) => {
+  const content = str.split(", ");
 
-  const regex =
-    /from\s(.+?)\s(\d{2}:\d{2})\sto\s(\d{2}:\d{2})\s(.+?)\sorganizer\s(.+?)\sevent\sshown\sas\s(.+)/;
+  const match = content[3].match(/needs rsvp/i);
 
-  const match = inputString.match(regex);
+  const invitation = match && match.length > 0;
 
-  if (match) return formatInvitation(match);
-  return formatEvent(inputString);
-};
+  const originalDate =
+    content[content.length - 2] + ", " + content[content.length - 1];
 
-// user created event processor function
-function formatEvent(inputString) {
-  const regex =
-    /from\s(.+?)\s(\d{2}:\d{2})\sto\s(\d{2}:\d{2})\s(.+?)\sevent\sshown\sas\s(.+)/;
-
-  const match = inputString.match(regex);
-
-  const originalDate = match[1];
-  const startTime = match[2];
-  const endTime = match[3];
-  const description = match[4];
-  const status = match[5];
-
-  const start = new Date(`${originalDate} ${startTime}`).toISOString();
-  const end = new Date(`${originalDate} ${endTime}`).toISOString();
+  const originalStart =
+    originalDate + " " + content[0].split(" to ")[0] + ":00";
+  const originalEnd = originalDate + " " + content[0].split(" to ")[1] + ":00";
+  const description = googlePrefix + content[1];
 
   return {
-    start,
-    end,
-    description: microsoftPrefix + description.trim(),
-    organizer: "User",
-    status: status === "Busy" ? "confirmed" : "tentative",
-    colorId: "1",
+    start: new Date(originalStart).toISOString(),
+    end: new Date(originalEnd).toISOString(),
+    description,
+    organizer: invitation ? "an invitation" : content[2],
+    status: invitation ? content[3] : "confirmed",
+    colorId: "2",
   };
-}
-
-// invitation processor function
-function formatInvitation(match) {
-  const originalDate = match[1];
-  const startTime = match[2];
-  const endTime = match[3];
-  const description = match[4];
-  const organizerMatch = match[5];
-  const status = match[6];
-
-  const start = new Date(`${originalDate} ${startTime}`).toISOString();
-  const end = new Date(`${originalDate} ${endTime}`).toISOString();
-
-  const organizer = organizerMatch ? organizerMatch.trim() : "User";
-
-  return {
-    start,
-    end,
-    description: microsoftPrefix + description.trim(),
-    organizer,
-    status: status === "Busy" ? "confirmed" : "tentative",
-    colorId: "1",
-  };
-}
-
-// language option
-const editContentRus = (initialContent) => {
-  if (!initialContent) return;
-  const parts = initialContent.split(": ")[1].split(" ");
-  const time = parts.slice(0, 4).join(" ");
-  const date = parts.slice(5, 9).join(" ");
-  const details = parts
-    .slice(9)
-    .filter(
-      (part) =>
-        part !== "событие" &&
-        part !== "отображается" &&
-        part !== "как" &&
-        part !== "Busy"
-    )
-    .join(" ");
-
-  return { time, date, details };
 };
