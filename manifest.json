@@ -19,6 +19,10 @@
     {
       "matches": ["https://outlook.live.com/calendar/*"],
       "js": ["microContentScript.js"]
+    },
+    {
+      "matches": ["https://outlook.live.com/mail/*"],
+      "js": ["microMailContentScript.js"]
     }
   ],
   "action": {
