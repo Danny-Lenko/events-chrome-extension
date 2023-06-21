@@ -23,6 +23,10 @@
     {
       "matches": ["https://outlook.live.com/mail/*"],
       "js": ["microMailContentScript.js"]
+    },
+    {
+      "matches": ["https://meet.google.com/*"],
+      "js": ["meetContentScript.js"]
     }
   ],
   "action": {
