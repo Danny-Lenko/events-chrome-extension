@@ -3,14 +3,6 @@
   "version": "0.1.0",
   "description": "Is the Google & Microsoft calendar pages events provider",
   "permissions": ["storage", "tabs"],
-  "host_permissions": [
-    "https://*.google.com/calendar/*",
-    "https://outlook.live.com/calendar/*"
-  ],
-  "background": {
-    "service_worker": "background.js",
-    "type": "module"
-  },
   "content_scripts": [
     {
       "matches": ["https://*.google.com/calendar/*"],
@@ -35,8 +27,7 @@
       "24": "assets/ext-icon.png",
       "32": "assets/ext-icon.png"
     },
-    "default_title": "Evening Eats Events",
-    "default_popup": "popup.html"
+    "default_title": "Evening Eats Events"
   },
   "manifest_version": 3
 }

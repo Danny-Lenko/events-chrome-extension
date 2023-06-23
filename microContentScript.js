@@ -248,23 +248,3 @@ function formatInvitation(match) {
     colorId: "1",
   };
 }
-
-// language option
-const editContentRus = (initialContent) => {
-  if (!initialContent) return;
-  const parts = initialContent.split(": ")[1].split(" ");
-  const time = parts.slice(0, 4).join(" ");
-  const date = parts.slice(5, 9).join(" ");
-  const details = parts
-    .slice(9)
-    .filter(
-      (part) =>
-        part !== "событие" &&
-        part !== "отображается" &&
-        part !== "как" &&
-        part !== "Busy"
-    )
-    .join(" ");
-
-  return { time, date, details };
-};
