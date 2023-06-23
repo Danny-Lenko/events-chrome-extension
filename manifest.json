@@ -6,11 +6,11 @@
   "content_scripts": [
     {
       "matches": ["https://*.google.com/calendar/*"],
-      "js": ["googleContentScript.js"]
+      "js": ["googleCalendarContentScript.js"]
     },
     {
       "matches": ["https://outlook.live.com/calendar/*"],
-      "js": ["microContentScript.js"]
+      "js": ["microCalendarContentScript.js"]
     },
     {
       "matches": ["https://outlook.live.com/mail/*"],
@@ -18,7 +18,7 @@
     },
     {
       "matches": ["https://meet.google.com/*"],
-      "js": ["meetContentScript.js"]
+      "js": ["googleMeetContentScript.js"]
     }
   ],
   "action": {
