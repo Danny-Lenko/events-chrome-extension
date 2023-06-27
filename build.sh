@@ -21,3 +21,6 @@ javascript-obfuscator dist/min/microCalendar.min.js --output dist/microCalendar.
 
 # delete min folder
 rm -rf dist/min
+
+# Apply execute permission to the script
+chmod +x build.sh

@@ -43,15 +43,30 @@ Or clone the repo to your local machine and execute: \
 
 To build the Chrome extension with minification and obfuscation, follow these steps:
 
-  1. Install the project dependencies by running the following command:
+  1. Install the project dependencies by running the following command: \
   `npm install`
   
-  2. Open the manifest.json file in the root directory and make any necessary modifications to fit your extension's requirements \
-  (e.g., update permissions, background scripts, content scripts, etc.).
+  2. Open the manifest.json file in the root directory and make any necessary modifications to fit your extension's requirements (e.g., update permissions, background scripts, content scripts, etc.).
 
-  3. Run the build command to generate the optimized build:
+  3. Run the build command to generate the optimized build: \
   `npm run build`
 
   4. The build process will perform tasks such as minification and obfuscation to optimize the code. Once the build process completes successfully, the generated files will be placed in the dist/ directory.
 
   5. The dist/ directory will contain the optimized build of your Chrome extension. You can now load this build in your Chrome browser for testing or publish it to the Chrome Web Store.
+
+## Browser Installation
+
+To test the extension locally in your Chrome browser, follow these steps:
+
+  1. Open the Chrome browser and navigate to chrome://extensions.
+
+  2. Enable the "Developer mode" toggle switch in the top-right corner of the page.
+
+  3. Click on the "Load unpacked" button.
+
+  4. In the file dialog, navigate to the dist/ directory of your extension's build and select it.
+
+  5. The extension will be loaded into Chrome, and you can now test its functionality on your desired webpages.
+
+  <sup>if you want to test without running the build, do the same but for the root folder<sup>
