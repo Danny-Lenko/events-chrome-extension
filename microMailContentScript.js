@@ -1,4 +1,4 @@
-const filterString = "hello world";
+const filterString = "football";
 const reg = new RegExp(filterString, "ig");
 
 // =========================================================== observer

@@ -18,11 +18,21 @@
 
 ## Download and Build Guide
 
-This guide provides step-by-step instructions for downloading and building the Chrome extension. It covers important aspects such as minification and obfuscation to ensure an optimized and secure final build.
+This guide provides step-by-step instructions for downloading and building the Chrome extension. \ 
+It covers important aspects such as minification and obfuscation to ensure an optimized and secure final build.
 
 ### Prerequisites
 
-Before proceeding with the download and build process, make sure you have the following prerequisites installed on your system:
+Before proceeding with the download and build process, make sure you have the following prerequisites installed and updated on your system:
 
-      - Node.js (version X.X.X or higher)
-      - npm (version X.X.X or higher)
+    - Node.js
+    - npm
+    - Git Bash
+
+### Downloading the Source Code
+
+GitLab does not provide a direct way to download a specific folder as a separate archive file. \ 
+Instead, you download the entire repository as a ZIP archive and then extract the specific folder from it.
+
+Or clone the repo to your local machine and execute:
+`cd src/main/chrome-extension`

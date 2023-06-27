@@ -1,0 +1,16 @@
+{
+  "name": "evening-eats-events",
+  "version": "1.0.0",
+  "description": "chrome extension",
+  "main": "googleCalendarContentScript.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "build.sh"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "javascript-obfuscator": "^4.0.2",
+    "uglify-js": "^3.17.4"
+  }
+}
