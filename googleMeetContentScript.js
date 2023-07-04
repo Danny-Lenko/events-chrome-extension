@@ -58,6 +58,8 @@ const getParty = () => {
   } else {
     party.filter((player) => player !== "organizer");
   }
+
+  console.log(party)
 };
 
 const checkIfAlone = () => {
