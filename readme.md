@@ -9,15 +9,6 @@
 - [Browser Installation](#browser-installation)
 - [Further Development and Maintenance](#further-development-and-maintenance)
 
-  - [What I learned](#what-i-learned)
-    - [APIs Projects](#apis-projects)
-    - [DOM Projects](#dom-projects)
-    - [Roll Dice Game](#roll-dice-game)
-    - [JS Projects (@andy)](#js-projects)
-    - [Battleships Game](#battleships-game)
-  - [Continued development](#continued-development)
-  - [Useful resources](#useful-resources)
-
 ## Download and Build Guide
 
 This guide provides step-by-step instructions for downloading and building the Chrome extension. \
@@ -48,7 +39,7 @@ To build the Chrome extension with minification and obfuscation, follow these st
   
   2. Open the manifest.json file in the root directory and make any necessary modifications to fit your extension's requirements (e.g., update permissions, background scripts, content scripts, etc.).
 
-  3. Run the build command to generate the optimized build: \
+  3. In the PowerShell terminal run the build command to generate the optimized build: \
   `npm run build`
 
   4. The build process will perform tasks such as minification and obfuscation to optimize the code. Once the build process completes successfully, the generated files will be placed in the dist/ directory.
@@ -70,3 +61,25 @@ To test the extension locally in your Chrome browser, follow these steps:
   5. The extension will be loaded into Chrome, and you can now test its functionality on your desired webpages.
 
   <sup>if you want to test without running the build, do the same but for the root folder<sup>
+
+## Further Development and Maintenance
+
+This guide provides instructions for developers on ongoing development and maintenance
+
+### Maintenance guide
+
+Maintaining a Chrome extension involves ensuring its continued functionality and compatibility with changes in external dependencies. \
+Here are some guidelines to help with maintenance:
+
+#### Antifragility
+
+#### Continued Testing
+
+Regularly test the extension against new updates or changes in the target services (such as Microsoft) to identify any compatibility issues. This ensures that the extension remains functional and provides a good user experience.
+
+#### Documentation
+
+Maintain up-to-date README.md including installation instructions, troubleshooting tips, and frequently asked questions (FAQs).
+
+Pay close attention to
+

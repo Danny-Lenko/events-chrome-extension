@@ -5,7 +5,8 @@
   "main": "googleCalendarContentScript.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "build.sh"
+    "build": "build.sh",
+    "build-bash": "bash ./build.sh"
   },
   "author": "",
   "license": "ISC",
