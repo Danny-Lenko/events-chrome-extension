@@ -2,6 +2,7 @@
 
 ## Table of contents
 
+- [To Readme Content Editor](#to-readme-content-editor)
 - [Download and Build Guide](#download-and-build-guide)
   - [Prerequisites](#prerequisites)
   - [Downloading the Source Code](#downloading-the-source-code)
@@ -9,19 +10,33 @@
 - [Browser Installation](#browser-installation)
 - [Further Development and Maintenance](#further-development-and-maintenance)
   - [New Features](#new-features)
-    -[New Files](#new-files)
+    - [New Files](#new-files)
   - [Maintenance Guide](#maintenance-guide)
-    -[Continued Testing](#continued-testing)
-    -[Antifragility](#antifragility)
-    -[Documentation](#documentation)
+    - [Continued Testing](#continued-testing)
+    - [Antifragility](#antifragility)
+    - [Documentation](#documentation)
 - [Miscellaneous Docs and Help for Newbies](#miscellaneous-docs-and-help-for-newbies)
   - [Usage Guide](#usage-guide)
     - [Google Meet Features](#google-meet-features)
     - [Google Calendar Features](#google-calendar-features)
     - [MS Calendar Features](#ms-calendar-features)
     - [MS Email Features](#ms-email-features)
+  - [Structure]
+    - [Google Meet Elements](#google-meet-elements)
+    - [Google Calendar Elements](#google-calendar-elements)
+    - [MS Calendar Elements](#ms-calendar-elements)
+    - [MS Email Elements](#ms-email-elements)
   - [Troubleshooting](#troubleshooting)
   - [FAQs](#faqs)
+- [Prioritizing](#prioritizing)
+  - [Critical Alarms](#critical-alarms)
+  - [Console Alarms](#console-alarms)
+
+
+## **To Readme Content Editor**
+
+1. **Please don't use the autoformat save on this file!**
+
 
 ## Download and Build Guide
 
@@ -138,12 +153,12 @@ Answers on how to use the extension, includes configuration options, features an
 2. Extension ends up the meeting if there is only one user left in the active meeting
 
 3. The configuration of the end of the meeting depending on the name of the meeting and the people whose exit affects the end. Example:
-      a) "360/platform - Daily Standup", complete when Victoria and Kateryna leave
-      b) "Release discussion" to be released when Enver is released
+      a) "360/platform - Daily Standup", exit when Victoria and Kateryna leave
+      b) "Release discussion" to react when Enver leaves
 
 4. Supports some regime, Ura is due to describe it
 
-#### Google calendar fetures
+#### Google calendar features
 
 1. Full support for only English language, weekly interface, date format yyyy-mm-dd, 1:01-23:59
 
@@ -186,25 +201,55 @@ Answers on how to use the extension, includes configuration options, features an
 ### Structure
 
 #### Google meet elements
+  1. 'User leaves meeting' event is tracked by: \
+  `const goMessage = document.getElementsByClassName("VfPpkd-gIZMF")[0];`
+
+  2. 'Terminate meeting' event is achieved by click on: \
+  `const redButton = document.querySelector('[jsname="CQylAd"]')`
+
+  3. 'Confirm meeting termination' event is achieved by click on: \
+  `const terminalButton = document.getElementsByClassName("VfPpkd-LgbsSe")[2]`
+
+  4. 'All users' collection is gathered by tracking the: \
+  `party = [...document.getElementsByClassName("dkjMxf")];`
+
+  5. 'The two users corner case' is solved by check on the:
+  `const organizer = document.querySelector('[jsname="JS8eVc"]');`
 
 
-
-
-
+#### Google calendar elements
+(...rest)
+#### MS calendar elements
+(...rest)
+#### MS email elements
+(...rest)
 
 ### Troubleshooting
 
 Lists common issues that developers might encounter and provides steps to resolve them.
 
-The 'npm run build' command does not work
-    **Solution:**
-    1) Install Git Bash globally;
-    2) Open Git Bash terminal in the root folder;
-    3) Execute the 'npm run build-bash'
-
+The 'npm run build' command does not work \
+  **Solution:**
+  1) Install Git Bash globally; \
+  2) Open Git Bash terminal in the root folder; \
+  3) Execute the 'npm run build-bash' \
 
 
 ### FAQs 
 
 Q: What are the 'target services'?
 A: The web pages, applications we are operating with via the extension. At the moment, this list includes: Google Meet, Google Calendar, MS Email, MS Calendar
+
+## Prioritizing
+
+Features' stability prioritizing
+
+### Critical Alarms
+
+1. Not possible to filter email (alongside implement the eternal loading fallback. trigger the native one)
+
+2. Not possible to terminate a Google meeting
+
+### Console Alarms
+
+1. Not possible to fullsreen the shared window during a Google meeting
