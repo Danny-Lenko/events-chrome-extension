@@ -5,6 +5,7 @@
   "main": "googleCalendarContentScript.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon api/server.js",
     "build": "build.sh",
     "build-bash": "bash ./build.sh"
   },
@@ -13,5 +14,8 @@
   "devDependencies": {
     "javascript-obfuscator": "^4.0.2",
     "uglify-js": "^3.17.4"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
   }
 }

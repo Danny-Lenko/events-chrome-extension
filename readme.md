@@ -8,6 +8,7 @@
   - [Downloading the Source Code](#downloading-the-source-code)
   - [Building the Extension](#building-the-extension)
 - [Browser Installation](#browser-installation)
+<!-- - [Local Server] -->
 - [Further Development and Maintenance](#further-development-and-maintenance)
   - [New Features](#new-features)
     - [New Files](#new-files)
@@ -92,6 +93,13 @@ To test the extension locally in your Chrome browser, follow these steps:
   5. The extension will be loaded into Chrome, and you can now test its functionality on your desired webpages.
 
   <sup>if you want to test without running the build, do the same but for the root folder<sup>
+
+## Start Local Server
+
+The local server provides rules for certain services
+
+To start it open terminal in the root folder and run:
+`npm start`
 
 ## Further Development and Maintenance
 
