@@ -20,10 +20,11 @@ const observer = new MutationObserver((mutationsList) => {
 
   const sharingNotice = document.getElementsByClassName("H0YpEc")[0];
 
-  console.log(sharingNotice);
+  // console.log(sharingNotice);
 
   getParty();
   registerMeeting();
+  console.log(checkIfLead(meetingsData));
 
   if (goMessage) {
     getParty();
@@ -58,8 +59,18 @@ const getParty = () => {
   } else {
     party.filter((player) => player !== "organizer");
   }
+};
 
-  console.log(party)
+const checkIfLead = (data) => {
+  const participants = data.participants;
+  const userNames = [...document.getElementsByClassName("XEazBc")].map(
+    (el) => el.innerHTML
+  );
+  const userName = userNames.pop();
+
+  const user = participants.find((user) => user.participantName === userName);
+
+  return user && user.participantRole === "lead";
 };
 
 const checkIfAlone = () => {
@@ -74,4 +85,73 @@ const registerMeeting = () => {
       console.log("the meeting has begun");
     }, meetingTimeout);
   }
+};
+
+const meetingsData = {
+  participants: [
+    {
+      participantId: 1,
+      participantName: "Yuriy Motrych",
+      participantRole: "organizer",
+    },
+    {
+      participantId: 2,
+      participantName: "Kateryna Pakharenko",
+      participantRole: "participant",
+    },
+    {
+      participantId: 3,
+      participantName: "Valerii Danylenko",
+      participantRole: "participant",
+    },
+    {
+      participantId: 4,
+      participantName: "Danylo Tabachenko",
+      participantRole: "participant",
+    },
+    {
+      participantId: 5,
+      participantName: "Enver Emir-Useynov",
+      participantRole: "participant",
+    },
+    {
+      participantId: 6,
+      participantName: "Oleksandr Sulzhenko",
+      participantRole: "organizer",
+    },
+    {
+      participantId: 7,
+      participantName: "Валерій Володимирович Даниленко",
+      participantRole: "participant",
+    },
+  ],
+  topics: [
+    {
+      topicId: 1,
+      topicTitle: "Daily Standup",
+      keyParticipants: [
+        "Kateryna Pakharenko",
+        "Danylo Tabachenko",
+        "Enver Emir-Useynov",
+      ],
+    },
+    {
+      topicId: 2,
+      topicTitle: "Release discussion",
+      keyParticipants: [
+        "Danylo Tabachenko",
+        "Oleksandr Sulzhenko",
+        "Enver Emir-Useynov",
+      ],
+    },
+    {
+      topicId: 3,
+      topicTitle: "Scrum poker",
+      keyParticipants: [
+        "Kateryna Pakharenko",
+        "Valerii Danylenko",
+        "Yuriy Motrych",
+      ],
+    },
+  ],
 };

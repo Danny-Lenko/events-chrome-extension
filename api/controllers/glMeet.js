@@ -32,7 +32,7 @@ const mockedParticipants = {
 
 const currentMeetingName = "Daily Standup";
 
-const meetingsData = {
+export const meetingsData = {
   participants: [
     {
       participantId: 1,
