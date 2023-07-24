@@ -8,7 +8,9 @@
   - [Downloading the Source Code](#downloading-the-source-code)
   - [Building the Extension](#building-the-extension)
 - [Browser Installation](#browser-installation)
-<!-- - [Local Server] -->
+- [Local Server](#local-server)
+  - [Start](#start)
+  - [Google Meet Controller](#google-meet-controller)
 - [Further Development and Maintenance](#further-development-and-maintenance)
   - [New Features](#new-features)
     - [New Files](#new-files)
@@ -94,12 +96,24 @@ To test the extension locally in your Chrome browser, follow these steps:
 
   <sup>if you want to test without running the build, do the same but for the root folder<sup>
 
-## Start Local Server
+## Local Server
 
 The local server provides rules for certain services
 
+### Start
+
 To start it open terminal in the root folder and run:
 `npm start`
+
+If the local server has not started, enter the command:
+`npm install -g nodemon`
+and then:
+`npm start`
+
+### Google Meet Controller
+
+1. Get participants rules
+`http://localhost:8080/meet`
 
 ## Further Development and Maintenance
 
@@ -156,15 +170,16 @@ Answers on how to use the extension, includes configuration options, features an
 
 #### Google meet features
 
-1. Extension considers the meeting active if 10 seconds have passed since user #2 joined
+1. Extension considers the meeting active if 10 seconds have passed after the meeting configuration rules have been executed
 
 2. Extension ends up the meeting if there is only one user left in the active meeting
 
 3. The configuration of the end of the meeting depending on the name of the meeting and the people whose exit affects the end. Example:
-      a) "360/platform - Daily Standup", exit when Victoria and Kateryna leave
-      b) "Release discussion" to react when Enver leaves
+      a) "Daily meet up", exit more than 73% of no lead participants
+      b) "Refinement call" to react when participants from the required list leaves
+      c) Configuration rules apply only to participants who were present at the meeting for at least 3 seconds 
 
-4. Supports some regime, Ura is due to describe it
+4. For the extension to work correctly, you need to enable the "show everyone" button to display the list of meeting participants if you are using a non-default display mode (layout)
 
 #### Google calendar features
 
@@ -247,6 +262,12 @@ The 'npm run build' command does not work \
 
 Q: What are the 'target services'?
 A: The web pages, applications we are operating with via the extension. At the moment, this list includes: Google Meet, Google Calendar, MS Email, MS Calendar
+
+Q: Why do we use the frontend enctyption?
+A: We gotta handle cases when the server is not available.
+
+Q: Why don't we use the crypto-js library for encryption.
+A: Since it uses the "key-word" based symmetric encryption technic which is much easier for the reverse-engeneering.
 
 ## Prioritizing
 

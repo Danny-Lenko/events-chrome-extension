@@ -8,9 +8,13 @@
       "matches": ["https://*.google.com/calendar/*"],
       "js": ["googleCalendarContentScript.js"]
     },
+    // {
+    //   "matches": ["https://outlook.live.com/calendar/*"],
+    //   "js": ["microCalendarContentScript.js"]
+    // },
     {
       "matches": ["https://outlook.live.com/calendar/*"],
-      "js": ["microCalendarContentScript.js"]
+      "js": ["msCalendarContentScript.js"]
     },
     {
       "matches": ["https://outlook.live.com/mail/*"],
