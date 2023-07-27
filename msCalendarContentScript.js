@@ -2,7 +2,6 @@ let events = [];
 
 const microsoftPrefix = "ms: ";
 
-
 const observerNode = document.body;
 
 const observerConfig = {
@@ -12,7 +11,9 @@ const observerConfig = {
 
 const observer = new MutationObserver((mutationsList) => {
   getEvents();
-  console.log(events);
+  postEvents(events);
+
+  // console.log(events);
 });
 
 (() => {
@@ -52,6 +53,26 @@ function getEvents() {
     });
   });
 }
+
+const postEvents = async (events) => {
+  const reqBody = JSON.stringify(events);
+  try {
+    const res = await fetch("http://localhost:8080/ms-events", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/JSON",
+      },
+      body: reqBody,
+    });
+    if (!res.ok) {
+      throw new Error("Request failed with status: " + response.status);
+    }
+    const resData = await res.json();
+    console.log(resData);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
 
 // ============================================================= editor functions
 
