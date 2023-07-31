@@ -1,11 +1,25 @@
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
+import knex from "knex";
 
 import {
   getMockParticipants,
   getKeyParticipants,
 } from "./controllers/glMeet.js";
+
+const db = knex({
+  client: "pg",
+  connection: {
+    host: "127.0.0.1",
+    // port : 3306,
+    user: "postgres",
+    password: "dsaewq321",
+    database: "testdb",
+  },
+});
+
+db.select("*").from("test_events").then(console.log);
 
 const app = express();
 const port = 8080;

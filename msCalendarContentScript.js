@@ -11,7 +11,7 @@ const observerConfig = {
 
 const observer = new MutationObserver((mutationsList) => {
   getEvents();
-  postEvents(events);
+  // postEvents(events);
 
   // console.log(events);
 });
