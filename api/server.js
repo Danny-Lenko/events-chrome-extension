@@ -8,6 +8,8 @@ import {
   getKeyParticipants,
 } from "./controllers/glMeet.js";
 
+import { postEvents } from "./controllers/postEvents.js";
+
 const db = knex({
   client: "pg",
   connection: {
@@ -34,36 +36,7 @@ app.get("/", (req, res) => {
 app.get("/meet", getMockParticipants());
 app.post("/meeting", getKeyParticipants());
 
-app.post("/ms-events", async (req, res) => {
-  const incomingEvents = req.body;
-
-  const formattedEvents = incomingEvents.map((event) => {
-    const { description, organizer, status, start, end, colorId } = event;
-    return {
-      description,
-      organizer,
-      status,
-      start_time: start,
-      end_time: end,
-      color_id: colorId,
-    };
-  });
-
-  try {
-    await db("ms_events")
-      .insert(formattedEvents)
-      .onConflict(["start_time", "end_time"])
-      .merge();
-
-    return res
-      .status(201)
-      .json({ message: "Events added or updated successfully" });
-  } catch (error) {
-    console.error("Error adding events:", error);
-    return res.status(500).json({ error: "Internal server error" });
-  }
-
-});
+app.post("/events", postEvents(db));
 
 app.listen(port, () => {
   console.log(`extension api listening on port ${port}`);

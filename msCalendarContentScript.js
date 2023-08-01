@@ -3,35 +3,18 @@ let events = [];
 const microsoftPrefix = "ms: ";
 
 const observerNode = document.body;
-
 const observerConfig = {
   childList: true,
   subtree: true,
 };
-
 const observer = new MutationObserver((mutationsList) => {
   getEvents();
   postEvents(events);
-
-  // console.log(events);
 });
 
 (() => {
   console.log("hello world");
   observer.observe(observerNode, observerConfig);
-
-  //   setTimeout(() => {
-  //     getEvents();
-  //     initialEvents = [...events];
-  //     console.log(initialEvents);
-
-  //     weekDateNode = document.getElementsByClassName("YjxmP");
-  //     weekDateContent = weekDateNode.length && weekDateNode[0].textContent;
-  //   }, initialTimeout);
-
-  //   setTimeout(() => {
-  //     observer.observe(observerNode, observerConfig);
-  //   }, observerTimeout);
 })();
 
 function getEvents() {
@@ -64,7 +47,7 @@ function getEvents() {
 const postEvents = async (events) => {
   const reqBody = JSON.stringify(events);
   try {
-    const res = await fetch("http://localhost:8080/ms-events", {
+    const res = await fetch("http://localhost:8080/events", {
       method: "POST",
       headers: {
         "Content-Type": "application/JSON",
