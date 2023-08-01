@@ -8,7 +8,7 @@ import {
   getKeyParticipants,
 } from "./controllers/glMeet.js";
 
-import { postEvents } from "./controllers/postEvents.js";
+import { addEvents } from "./controllers/addEvents.js";
 
 const db = knex({
   client: "pg",
@@ -16,12 +16,12 @@ const db = knex({
     host: "127.0.0.1",
     // port : 3306,
     user: "postgres",
-    password: "dsaewq321",
-    database: "events",
+    password: "ewq321",
+    database: "extension",
   },
 });
 
-db.select("*").from("ms_events").then(console.log);
+db.select("*").from("events").then(console.log);
 
 const app = express();
 const port = 8080;
@@ -36,7 +36,7 @@ app.get("/", (req, res) => {
 app.get("/meet", getMockParticipants());
 app.post("/meeting", getKeyParticipants());
 
-app.post("/events", postEvents(db));
+app.post("/add-events", addEvents(db));
 
 app.listen(port, () => {
   console.log(`extension api listening on port ${port}`);

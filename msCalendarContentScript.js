@@ -47,7 +47,7 @@ function getEvents() {
 const postEvents = async (events) => {
   const reqBody = JSON.stringify(events);
   try {
-    const res = await fetch("http://localhost:8080/events", {
+    const res = await fetch("http://localhost:8080/add-events", {
       method: "POST",
       headers: {
         "Content-Type": "application/JSON",

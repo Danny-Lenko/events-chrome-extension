@@ -1,4 +1,4 @@
-export const postEvents = (db) => async (req, res) => {
+export const addEvents = (db) => async (req, res) => {
   const incomingEvents = req.body;
 
   const formattedEvents = incomingEvents.map((event) => {
@@ -14,7 +14,7 @@ export const postEvents = (db) => async (req, res) => {
   });
 
   try {
-    await db("ms_events")
+    await db("events")
       .insert(formattedEvents)
       .onConflict(["description"])
       .merge();
