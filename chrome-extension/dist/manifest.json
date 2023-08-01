@@ -1,28 +1,24 @@
 {
-  "name": "--Dev Evening Eats Events",
+  "name": "Evening Eats Events",
   "version": "0.1.0",
   "description": "Is the Google & Microsoft services optimizer",
   "permissions": ["storage", "tabs"],
   "content_scripts": [
     {
       "matches": ["https://*.google.com/calendar/*"],
-      "js": ["googleCalendarContentScript.js"]
+      "js": ["googleCalendar.obfuscated.min.js"]
     },
-    // {
-    //   "matches": ["https://outlook.live.com/calendar/*"],
-    //   "js": ["microCalendarContentScript.js"]
-    // },
     {
       "matches": ["https://outlook.live.com/calendar/*"],
-      "js": ["msCalendarContentScript.js"]
+      "js": ["microCalendar.obfuscated.min.js"]
     },
     {
       "matches": ["https://outlook.live.com/mail/*"],
-      "js": ["microMailContentScript.js"]
+      "js": ["microMail.obfuscated.min.js"]
     },
     {
       "matches": ["https://meet.google.com/*"],
-      "js": ["googleMeetContentScript.js"]
+      "js": ["googleMeet.obfuscated.min.js"]
     }
   ],
   "action": {
@@ -31,7 +27,7 @@
       "24": "assets/ext-icon.png",
       "32": "assets/ext-icon.png"
     },
-    "default_title": "--Dev Evening Eats Events"
+    "default_title": "Evening Eats Events"
   },
   "manifest_version": 3
 }

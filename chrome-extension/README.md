@@ -263,12 +263,6 @@ The 'npm run build' command does not work \
 Q: What are the 'target services'?
 A: The web pages, applications we are operating with via the extension. At the moment, this list includes: Google Meet, Google Calendar, MS Email, MS Calendar
 
-Q: Why do we use the frontend enctyption?
-A: We gotta handle cases when the server is not available.
-
-Q: Why don't we use the crypto-js library for encryption.
-A: Since it uses the "key-word" based symmetric encryption technic which is much easier for the reverse-engeneering.
-
 ## Prioritizing
 
 Features' stability prioritizing
