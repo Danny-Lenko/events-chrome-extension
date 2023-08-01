@@ -11,7 +11,7 @@ const observerConfig = {
 
 const observer = new MutationObserver((mutationsList) => {
   getEvents();
-  // postEvents(events);
+  postEvents(events);
 
   // console.log(events);
 });
@@ -38,8 +38,15 @@ function getEvents() {
   events = [];
 
   [...document.getElementsByClassName("Ki1Xx")].forEach((element) => {
-    const info = element.children[0].ariaLabel;
+    const info =
+      element.children[0] && element.children[1]
+        ? element.children[0].ariaLabel || element.children[1].ariaLabel
+        : null;
+
+    if (!info) return;
+
     const content = editContentEng(info);
+
     if (!content) return;
     const { start, end, description, organizer, status, colorId } = content;
 
@@ -65,7 +72,7 @@ const postEvents = async (events) => {
       body: reqBody,
     });
     if (!res.ok) {
-      throw new Error("Request failed with status: " + response.status);
+      throw new Error("Request failed with status: " + res.status);
     }
     const resData = await res.json();
     console.log(resData);
