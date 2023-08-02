@@ -9,6 +9,7 @@ import {
 } from "./controllers/glMeet.js";
 
 import { addEvents } from "./controllers/addEvents.js";
+import { deleteEvent } from "./controllers/deleteEvent.js";
 
 const db = knex({
   client: "pg",
@@ -16,7 +17,7 @@ const db = knex({
     host: "127.0.0.1",
     // port : 3306,
     user: "postgres",
-    password: "dsaewq321",
+    password: "",
     database: "extension",
   },
 });
@@ -34,25 +35,14 @@ app.get("/", (req, res) => {
 });
 
 app.get("/meet", getMockParticipants());
-app.post("/meeting", getKeyParticipants());
 
+app.post("/meeting", getKeyParticipants());
 app.post("/add-events", addEvents(db));
 
-app.delete("/delete-events", async (req, res) => {
-  const { description, start, end } = req.body;
-  const start_time = start;
-  const end_time = end;
-
-  try {
-    await db("events").where({ description, start_time, end_time }).del();
-
-    res.status(200).json({ message: "Event deleted successfully" });
-  } catch (error) {
-    console.error("Error deleting event:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
+app.delete("/delete-event", deleteEvent(db));
 
 app.listen(port, () => {
   console.log(`extension api listening on port ${port}`);
 });
+
+
