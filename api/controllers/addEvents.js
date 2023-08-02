@@ -16,12 +16,17 @@ export const addEvents = (db) => async (req, res) => {
   try {
     await db("events")
       .insert(formattedEvents)
-      .onConflict(["description"])
-      .merge();
+      .onConflict(["description", "start_time", "end_time"])
+      .ignore();
+
+    const updatedEvents = await db("events").select("*");
 
     return res
       .status(201)
-      .json({ message: "Events added or updated successfully" });
+      .json({
+        message: "Events added or updated successfully",
+        events: updatedEvents,
+      });
   } catch (error) {
     console.error("Error adding events:", error);
     return res.status(500).json({ error: "Internal server error" });
