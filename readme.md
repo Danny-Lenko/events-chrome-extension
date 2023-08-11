@@ -9,6 +9,7 @@
   - [Building the Extension](#building-the-extension)
 - [Browser Installation](#browser-installation)
 - [Local Server](#local-server)
+  - [Database](#database)
   - [Start](#start)
   - [Google Meet Controller](#google-meet-controller)
 - [Further Development and Maintenance](#further-development-and-maintenance)
@@ -24,7 +25,7 @@
     - [Google Calendar Features](#google-calendar-features)
     - [MS Calendar Features](#ms-calendar-features)
     - [MS Email Features](#ms-email-features)
-  - [Structure]
+  - [Structure](#structure)
     - [Google Meet Elements](#google-meet-elements)
     - [Google Calendar Elements](#google-calendar-elements)
     - [MS Calendar Elements](#ms-calendar-elements)
@@ -98,7 +99,49 @@ To test the extension locally in your Chrome browser, follow these steps:
 
 ## Local Server
 
-The local server provides rules for certain services
+The local server provides rules for certain services \
+and extends their functionality.
+
+### Database
+
+**Windows installation** \
+
+  1. Download the installer from the official website: https://www.enterprisedb.com/download-postgresql-binaries
+
+  2. Run the installer and follow the installation wizard.
+
+  3. During the installation, you'll be asked to set a password for the default database user "postgres." Remember this password as you'll need it later.
+
+  4. After the installation is complete, open the "pgAdmin" application from the Start menu. This is a graphical interface to interact with PostgreSQL.
+
+  5. In pgAdmin, you can find your server under "Servers" in the left pane. To start the server, right-click on it, and select "Connect Server." Enter the password you set during the installation.
+
+  6. Once you've installed PostgreSQL and started the database server, you can interact with it using the command-line tool psql.
+
+**Set the db up** \
+
+  In the terminal use the following commands: \
+
+  1. `psql -U your_username -h localhost`.
+
+  2. `CREATE DATABASE extension;`.
+
+  3. `\c extension;`.
+
+  4. `CREATE TABLE events (
+    id SERIAL PRIMARY KEY,
+    start_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    end_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    description TEXT NOT NULL,
+    organizer VARCHAR(255) NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    color_id INTEGER NOT NULL,
+  );`
+
+  5. ALTER TABLE events
+  ADD CONSTRAINT unique_event_description_time_range
+  UNIQUE (description, start_time, end_time);
+
 
 ### Start
 
@@ -114,6 +157,14 @@ and then:
 
 1. Get participants rules
 `http://localhost:8080/meet`
+
+### Calendar Controllers
+
+1. Add events
+`http://localhost:8080/add-events`
+
+2. Delete an event
+`http://localhost:8080/delete-event`
 
 ## Further Development and Maintenance
 

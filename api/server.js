@@ -8,6 +8,8 @@ import {
   getKeyParticipants,
 } from "./controllers/glMeet.js";
 
+import { getAdminEvents, authorize, listEvents } from "./glCalenderApi.js";
+
 import { addEvents } from "./controllers/addEvents.js";
 import { deleteEvent } from "./controllers/deleteEvent.js";
 
@@ -41,8 +43,13 @@ app.post("/add-events", addEvents(db));
 
 app.delete("/delete-event", deleteEvent(db));
 
-app.listen(port, () => {
+app.listen(port, async () => {
   console.log(`extension api listening on port ${port}`);
+
+  try {
+    // Call the function to fetch and log admin events
+    await getAdminEvents();
+  } catch (error) {
+    console.error("Error fetching admin events:", error);
+  }
 });
-
-

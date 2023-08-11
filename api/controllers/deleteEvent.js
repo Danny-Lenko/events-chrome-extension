@@ -5,8 +5,11 @@ export const deleteEvent = (db) => async (req, res) => {
 
   try {
     await db("events").where({ description, start_time, end_time }).del();
+    const updatedEvents = await db("events").select("*");
 
-    res.status(200).json({ message: "Event deleted successfully" });
+    res
+      .status(200)
+      .json({ message: "Event deleted successfully", events: updatedEvents });
   } catch (error) {
     console.error("Error deleting event:", error);
     res.status(500).json({ error: "Internal server error" });
