@@ -8,18 +8,23 @@ import {
   getKeyParticipants,
 } from "./controllers/glMeet.js";
 
+import { getAdminEvents, authorize, listEvents } from "./glCalenderApi.js";
+
+import { addEvents } from "./controllers/addEvents.js";
+import { deleteEvent } from "./controllers/deleteEvent.js";
+
 const db = knex({
   client: "pg",
   connection: {
     host: "127.0.0.1",
     // port : 3306,
     user: "postgres",
-    password: "dsaewq321",
-    database: "testdb",
+    password: "",
+    database: "extension",
   },
 });
 
-db.select("*").from("test_events").then(console.log);
+db.select("*").from("events").then(console.log);
 
 const app = express();
 const port = 8080;
@@ -32,14 +37,19 @@ app.get("/", (req, res) => {
 });
 
 app.get("/meet", getMockParticipants());
+
 app.post("/meeting", getKeyParticipants());
+app.post("/add-events", addEvents(db));
 
-app.post("/ms-events", (req, res) => {
-  console.log(req.body);
+app.delete("/delete-event", deleteEvent(db));
 
-  return res.json({ hello: "hello" });
-});
-
-app.listen(port, () => {
+app.listen(port, async () => {
   console.log(`extension api listening on port ${port}`);
+
+  try {
+    // Call the function to fetch and log admin events
+    await getAdminEvents();
+  } catch (error) {
+    console.error("Error fetching admin events:", error);
+  }
 });
