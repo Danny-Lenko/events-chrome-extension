@@ -32,9 +32,11 @@ function getEvents() {
     .forEach((node) => {
       const content = editContent(node.innerHTML);
       if (!content) return;
-      const { start, end, description, organizer, status, colorId } = content;
+      const { summary, start, end, description, organizer, status, colorId } =
+        content;
 
       events.push({
+        summary,
         start,
         end,
         description,
@@ -81,14 +83,15 @@ const editContent = (str) => {
   const originalStart =
     originalDate + " " + content[0].split(" to ")[0] + ":00";
   const originalEnd = originalDate + " " + content[0].split(" to ")[1] + ":00";
-  const description = googlePrefix + content[1];
+  const summary = googlePrefix + content[1];
 
   return {
     start: new Date(originalStart).toISOString(),
     end: new Date(originalEnd).toISOString(),
-    description,
+    summary,
     organizer: invitation ? "an invitation" : content[2],
     status: invitation ? content[3] : "confirmed",
     colorId: "2",
+    description: "",
   };
 };

@@ -21,10 +21,10 @@ const observer = new MutationObserver((mutationsList) => {
 })();
 
 function getTargetEvent() {
-  const descriptionNode = document.querySelector(".rHI1u");
+  const summaryNode = document.querySelector(".rHI1u");
   const timeNode = document.querySelector(".AhH9N");
 
-  if (descriptionNode && timeNode) {
+  if (summaryNode && timeNode) {
     const regexPattern =
       /^(\w{3}) (\d{4}-\d{2}-\d{2} \d{2}:\d{2}) - (\d{2}:\d{2})$/;
 
@@ -42,7 +42,7 @@ function getTargetEvent() {
       const end = new Date(inputEnd).toISOString();
 
       targetEvent = {
-        description: `${microsoftPrefix}${descriptionNode.textContent}`,
+        summary: `${microsoftPrefix}${summaryNode.textContent}`,
         start,
         end,
       };
@@ -51,7 +51,7 @@ function getTargetEvent() {
 }
 
 const deleteTargetEvent = async (event) => {
-  if (!event.description || !event.start || !event.end) return;
+  if (!event.summary || !event.start || !event.end) return;
 
   const tooltip = document.querySelector(".Os1Gu");
 
@@ -93,15 +93,17 @@ function getEvents() {
     const content = editContentEng(info);
 
     if (!content) return;
-    const { start, end, description, organizer, status, colorId } = content;
+    const { start, end, summary, organizer, status, colorId, description } =
+      content;
 
     events.push({
       start,
       end,
-      description,
+      summary,
       organizer,
       status,
       colorId,
+      description,
     });
   });
 }
@@ -152,7 +154,7 @@ function formatEvent(inputString) {
   const originalDate = match[1];
   const startTime = match[2];
   const endTime = match[3];
-  const description = match[4];
+  const summary = match[4];
   const status = match[5];
 
   const start = new Date(`${originalDate} ${startTime}`).toISOString();
@@ -161,10 +163,11 @@ function formatEvent(inputString) {
   return {
     start,
     end,
-    description: microsoftPrefix + description.trim(),
+    summary: microsoftPrefix + summary.trim(),
     organizer: "User",
     status: status === "Busy" ? "confirmed" : "tentative",
     colorId: "1",
+    description: "",
   };
 }
 
@@ -173,7 +176,7 @@ function formatInvitation(match) {
   const originalDate = match[1];
   const startTime = match[2];
   const endTime = match[3];
-  const description = match[4];
+  const summary = match[4];
   const organizerMatch = match[5];
   const status = match[6];
 
@@ -185,9 +188,10 @@ function formatInvitation(match) {
   return {
     start,
     end,
-    description: microsoftPrefix + description.trim(),
+    summary: microsoftPrefix + summary.trim(),
     organizer,
     status: status === "Busy" ? "confirmed" : "tentative",
     colorId: "1",
+    description: "",
   };
 }
