@@ -1,9 +1,15 @@
+import { authorize } from "../googleApiClient/glCalendarApiClient.js";
+import { insertGoogleEvent } from "./googleApi.js";
+
 export const addEvents = (db) => async (req, res) => {
   const incomingEvents = req.body;
 
-  const formattedEvents = incomingEvents.map((event) => {
-    const { description, organizer, status, start, end, colorId } = event;
+  const dbFormattedEvents = incomingEvents.map((event) => {
+    const { summary, description, organizer, status, start, end, colorId } =
+      event;
+
     return {
+      summary,
       description,
       organizer,
       status,
@@ -15,18 +21,50 @@ export const addEvents = (db) => async (req, res) => {
 
   try {
     await db("events")
-      .insert(formattedEvents)
+      .insert(dbFormattedEvents)
       .onConflict(["description", "start_time", "end_time"])
       .ignore();
 
     const updatedEvents = await db("events").select("*");
 
-    return res
-      .status(201)
-      .json({
-        message: "Events added or updated successfully",
-        events: updatedEvents,
-      });
+    const googleApiFormattedEvents = updatedEvents.map((event) => {
+      const {
+        id,
+        summary,
+        start_time,
+        end_time,
+        color_id,
+        organizer,
+        description,
+      } = event;
+
+      return {
+        id: id.replace(/-/g, ""),
+        summary,
+        start: {
+          dateTime: start_time,
+          timeZome: "Europe/Kyiv",
+        },
+        end: {
+          dateTime: end_time,
+          timeZome: "Europe/Kyiv",
+        },
+        colorId: color_id,
+        organizer,
+        description,
+      };
+    });
+
+    for (const event of googleApiFormattedEvents) {
+      authorize()
+        .then((auth) => insertGoogleEvent(auth, event))
+        .catch(console.error);
+    }
+
+    return res.status(201).json({
+      message: "Events added or updated successfully",
+      events: updatedEvents,
+    });
   } catch (error) {
     console.error("Error adding events:", error);
     return res.status(500).json({ error: "Internal server error" });

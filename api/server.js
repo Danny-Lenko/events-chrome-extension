@@ -2,16 +2,19 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import knex from "knex";
+import dotenv from "dotenv";
 
 import {
   getMockParticipants,
   getKeyParticipants,
 } from "./controllers/glMeet.js";
 
-import { getAdminEvents, authorize, listEvents } from "./glCalenderApi.js";
-
+import { authorize } from "./googleApiClient/glCalendarApiClient.js";
+import { listEvents } from "./controllers/googleApi.js";
 import { addEvents } from "./controllers/addEvents.js";
 import { deleteEvent } from "./controllers/deleteEvent.js";
+
+dotenv.config();
 
 const db = knex({
   client: "pg",
@@ -19,7 +22,7 @@ const db = knex({
     host: "127.0.0.1",
     // port : 3306,
     user: "postgres",
-    password: "",
+    password: process.env.PG_PASSWORD,
     database: "extension",
   },
 });
@@ -48,7 +51,7 @@ app.listen(port, async () => {
 
   try {
     // Call the function to fetch and log admin events
-    await getAdminEvents();
+    authorize().then(listEvents).catch(console.error);
   } catch (error) {
     console.error("Error fetching admin events:", error);
   }
