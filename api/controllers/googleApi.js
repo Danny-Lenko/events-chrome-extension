@@ -21,7 +21,7 @@ export async function listEvents(auth) {
   });
 }
 
-export function insertEvent(auth, event) {
+export function insertGoogleEvent(auth, event) {
   const calendar = google.calendar({ version: "v3", auth });
   calendar.events.insert(
     {
@@ -37,6 +37,24 @@ export function insertEvent(auth, event) {
         return;
       }
       console.log("Event created: %s", event.htmlLink);
+    }
+  );
+}
+
+export function deleteGoogleEvent(auth, eventId) {
+  const calendar = google.calendar({ version: "v3", auth });
+
+  calendar.events.delete(
+    {
+      calendarId: "primary",
+      eventId: eventId,
+    },
+    function (err, response) {
+      if (err) {
+        console.error("Error deleting event:", err);
+        return;
+      }
+      console.log("Event deleted:", eventId);
     }
   );
 }

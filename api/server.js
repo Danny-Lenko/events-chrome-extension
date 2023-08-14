@@ -2,6 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import knex from "knex";
+import dotenv from "dotenv";
 
 import {
   getMockParticipants,
@@ -10,9 +11,10 @@ import {
 
 import { authorize } from "./googleApiClient/glCalendarApiClient.js";
 import { listEvents } from "./controllers/googleApi.js";
-
 import { addEvents } from "./controllers/addEvents.js";
 import { deleteEvent } from "./controllers/deleteEvent.js";
+
+dotenv.config();
 
 const db = knex({
   client: "pg",
@@ -20,7 +22,7 @@ const db = knex({
     host: "127.0.0.1",
     // port : 3306,
     user: "postgres",
-    password: "",
+    password: process.env.PG_PASSWORD,
     database: "extension",
   },
 });

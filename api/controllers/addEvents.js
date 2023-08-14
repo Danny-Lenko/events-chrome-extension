@@ -1,5 +1,5 @@
 import { authorize } from "../googleApiClient/glCalendarApiClient.js";
-import { insertEvent } from "./googleApi.js";
+import { insertGoogleEvent } from "./googleApi.js";
 
 export const addEvents = (db) => async (req, res) => {
   const incomingEvents = req.body;
@@ -57,7 +57,7 @@ export const addEvents = (db) => async (req, res) => {
 
     for (const event of googleApiFormattedEvents) {
       authorize()
-        .then((auth) => insertEvent(auth, event))
+        .then((auth) => insertGoogleEvent(auth, event))
         .catch(console.error);
     }
 
