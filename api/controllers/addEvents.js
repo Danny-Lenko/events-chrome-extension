@@ -27,39 +27,39 @@ export const addEvents = (db) => async (req, res) => {
 
     const updatedEvents = await db("events").select("*");
 
-    const googleApiFormattedEvents = updatedEvents.map((event) => {
-      const {
-        id,
-        summary,
-        start_time,
-        end_time,
-        color_id,
-        organizer,
-        description,
-      } = event;
+    // const googleApiFormattedEvents = updatedEvents.map((event) => {
+    //   const {
+    //     id,
+    //     summary,
+    //     start_time,
+    //     end_time,
+    //     color_id,
+    //     organizer,
+    //     description,
+    //   } = event;
 
-      return {
-        id: id.replace(/-/g, ""),
-        summary,
-        start: {
-          dateTime: start_time,
-          timeZome: "Europe/Kyiv",
-        },
-        end: {
-          dateTime: end_time,
-          timeZome: "Europe/Kyiv",
-        },
-        colorId: color_id,
-        organizer,
-        description,
-      };
-    });
+    //   return {
+    //     id: id.replace(/-/g, ""),
+    //     summary,
+    //     start: {
+    //       dateTime: start_time,
+    //       timeZome: "Europe/Kyiv",
+    //     },
+    //     end: {
+    //       dateTime: end_time,
+    //       timeZome: "Europe/Kyiv",
+    //     },
+    //     colorId: color_id,
+    //     organizer,
+    //     description,
+    //   };
+    // });
 
-    for (const event of googleApiFormattedEvents) {
-      authorize()
-        .then((auth) => insertGoogleEvent(auth, event))
-        .catch(console.error);
-    }
+    // for (const event of googleApiFormattedEvents) {
+    //   authorize()
+    //     .then((auth) => insertGoogleEvent(auth, event))
+    //     .catch(console.error);
+    // }
 
     return res.status(201).json({
       message: "Events added or updated successfully",

@@ -22,7 +22,8 @@
     },
     {
       "matches": ["https://outlook.live.com/mail/*"],
-      "js": ["microMailContentScript.js"]
+      "js": ["msEmailContentScript.js"],
+      "run_at": "document_end"
     },
     {
       "matches": ["https://meet.google.com/*"],

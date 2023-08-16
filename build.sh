@@ -12,7 +12,7 @@ uglifyjs googleCalendarContentScript.js -o dist/min/googleCalendar.min.js
 javascript-obfuscator dist/min/googleCalendar.min.js --output dist/googleCalendar.obfuscated.min.js
 
 # microsoft email
-uglifyjs microMailContentScript.js -o dist/min/microMail.min.js
+uglifyjs msEmailContentScript.js -o dist/min/microMail.min.js
 javascript-obfuscator dist/min/microMail.min.js --output dist/microMail.obfuscated.min.js
 
 # microsoft Calendar
