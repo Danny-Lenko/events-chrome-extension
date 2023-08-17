@@ -13,7 +13,7 @@ const observerConfig = {
 };
 
 const observer = new MutationObserver((mutationsList) => {
-  const mails = document.getElementsByClassName("hcpt");
+  const mails = document.getElementsByClassName("hcptT");
   const noEmails = checkIsEmpty();
 
   const loadingOverlay = document.getElementById("loading-overlay");

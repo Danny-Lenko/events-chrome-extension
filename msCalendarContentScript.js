@@ -11,14 +11,25 @@ const observerConfig = {
 const observer = new MutationObserver((mutationsList) => {
   getEvents();
   getTargetEvent();
-  deleteTargetEvent(targetEvent);
-  postEvents(events);
+
+  getActionName(targetEvent) === "Event deleted" ||
+  getActionName(targetEvent) === "Event saved"
+    ? deleteTargetEvent(targetEvent)
+    : postEvents(events);
 });
 
 (() => {
   console.log("hello world");
   observer.observe(observerNode, observerConfig);
 })();
+
+function getActionName(event) {
+  if (!event.summary || !event.summary || !event.summary) return;
+
+  const tooltip = document.querySelector(".Os1Gu");
+
+  return tooltip ? tooltip.textContent : "Unknown";
+}
 
 function getTargetEvent() {
   const summaryNode = document.querySelector(".rHI1u");
@@ -53,30 +64,31 @@ function getTargetEvent() {
 const deleteTargetEvent = async (event) => {
   if (!event.summary || !event.start || !event.end) return;
 
-  const tooltip = document.querySelector(".Os1Gu");
+  // const tooltip = document.querySelector(".Os1Gu");
 
-  if (tooltip && tooltip.textContent === "Event deleted") {
-    const reqBody = JSON.stringify(event);
+  // if (tooltip && tooltip.textContent === "Event deleted") {
 
-    try {
-      const res = await fetch("http://localhost:8080/delete-event", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/JSON",
-        },
-        body: reqBody,
-      });
-      if (!res.ok) {
-        throw new Error("Request failed with status: " + res.status);
-      }
-      const resData = await res.json();
-      console.log(resData);
-    } catch (error) {
-      console.error("Error fetching data:", error);
+  const reqBody = JSON.stringify(event);
+
+  try {
+    const res = await fetch("http://localhost:8080/delete-event", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/JSON",
+      },
+      body: reqBody,
+    });
+    if (!res.ok) {
+      throw new Error("Request failed with status: " + res.status);
     }
-
-    targetEvent = {};
+    const resData = await res.json();
+    console.log(resData);
+  } catch (error) {
+    console.error("Error fetching data:", error);
   }
+
+  targetEvent = {};
+  // }
 };
 
 function getEvents() {
