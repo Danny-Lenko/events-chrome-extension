@@ -10,7 +10,11 @@ import {
 } from "./controllers/glMeet.js";
 
 import { authorize } from "./googleApiClient/glCalendarApiClient.js";
-import { listEvents } from "./controllers/googleApi.js";
+import {
+  listEvents,
+  listLabels,
+  createDraftEmail,
+} from "./controllers/googleApi.js";
 import { addEvents } from "./controllers/addEvents.js";
 import { deleteEvent } from "./controllers/deleteEvent.js";
 
@@ -46,12 +50,23 @@ app.post("/add-events", addEvents(db));
 
 app.delete("/delete-event", deleteEvent(db));
 
+app.post("/error-ms-email", (req, res) => {
+  try {
+    // createDraftEmail();
+    authorize().then(createDraftEmail).catch(console.error);
+    return res.status(200).json("Message sent");
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 app.listen(port, async () => {
   console.log(`extension api listening on port ${port}`);
 
   try {
     // Call the function to fetch and log admin events
     authorize().then(listEvents).catch(console.error);
+    authorize().then(listLabels).catch(console.error);
   } catch (error) {
     console.error("Error fetching admin events:", error);
   }

@@ -13,13 +13,13 @@ const observerConfig = {
 };
 
 const observer = new MutationObserver((mutationsList) => {
-  const mails = document.getElementsByClassName("hcptT");
+  const mails = document.getElementsByClassName("hcpt");
   const noEmails = checkIsEmpty();
 
   const loadingOverlay = document.getElementById("loading-overlay");
 
   if (!mails[0] && controller < 1) {
-    let { loadingOverlay, countDownMessage, initialCountdown } =
+    let { loadingOverlay, countDownMessage, initialCountdown, loadingMessage } =
       generateFallback();
     loadingOverlay.appendChild(countDownMessage);
 
@@ -28,10 +28,14 @@ const observer = new MutationObserver((mutationsList) => {
       countDownMessage.textContent = initialCountdown;
       loadingOverlay.appendChild(countDownMessage);
 
-      if (initialCountdown < 1) {
+      if (initialCountdown < 0) {
         clearInterval(interval);
 
-        // here goes the send message logic
+        // the send message logic
+        sendMessage();
+        countDownMessage.remove();
+        loadingMessage.innerText =
+          "Failed filtering mails. Admin has been informed";
       }
     }, 1000);
 
@@ -57,6 +61,25 @@ const observer = new MutationObserver((mutationsList) => {
   });
 });
 
+const sendMessage = async () => {
+  try {
+    const res = await fetch("http://localhost:8080/error-ms-email", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/JSON",
+      },
+      body: "",
+    });
+    if (!res.ok) {
+      throw new Error("Request failed with status: " + res.status);
+    }
+    const resData = await res.json();
+    console.log(resData);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
+
 // ======================================================== content script
 
 (() => {
@@ -66,7 +89,7 @@ const observer = new MutationObserver((mutationsList) => {
 function checkIsEmpty() {
   const emptyEl = document.getElementById("EmptyState_MainMessage");
 
-  return emptyEl?.innerText !== "Select an item to read";
+  return emptyEl?.innerText === "All done for the day";
 }
 
 // ======================================================= fallback screen settings
@@ -82,7 +105,8 @@ function generateFallback() {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #f0f0f0;
+    // background-color: #f0f0f0;
+    background-color: #ffffff;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -124,5 +148,5 @@ function generateFallback() {
   loadingOverlay.appendChild(loadingSpinner);
   loadingOverlay.appendChild(loadingMessage);
 
-  return { loadingOverlay, countDownMessage, initialCountdown };
+  return { loadingOverlay, countDownMessage, initialCountdown, loadingMessage };
 }

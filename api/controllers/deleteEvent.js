@@ -11,11 +11,11 @@ export const deleteEvent = (db) => async (req, res) => {
       .where({ summary, start_time, end_time })
       .first();
 
-    // const eventId = eventToDelete.id.replace(/-/g, "");
+    const eventId = eventToDelete.id.replace(/-/g, "");
 
-    // authorize()
-    //   .then((auth) => deleteGoogleEvent(auth, eventId))
-    //   .catch(console.error);
+    authorize()
+      .then((auth) => deleteGoogleEvent(auth, eventId))
+      .catch(console.error);
 
     await db("events").where({ summary, start_time, end_time }).del();
     const updatedEvents = await db("events").select("*");

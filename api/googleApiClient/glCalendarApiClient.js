@@ -5,7 +5,11 @@ import { authenticate } from "@google-cloud/local-auth";
 import { google } from "googleapis";
 
 // If modifying these scopes, delete token.json.
-const SCOPES = ["https://www.googleapis.com/auth/calendar"];
+const SCOPES = [
+  "https://www.googleapis.com/auth/calendar",
+  "https://www.googleapis.com/auth/gmail.readonly",
+  "https://www.googleapis.com/auth/gmail.compose",
+];
 // The file token.json stores the user's access and refresh tokens, and is
 // created automatically when the authorization flow completes for the first
 // time.
@@ -63,4 +67,3 @@ export async function authorize() {
   }
   return client;
 }
-
