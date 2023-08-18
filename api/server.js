@@ -9,7 +9,7 @@ import {
   getKeyParticipants,
 } from "./controllers/glMeet.js";
 
-import { authorize } from "./googleApiClient/glCalendarApiClient.js";
+import { authorize } from "./googleApiClient/googleApiClient.js";
 import {
   listEvents,
   listLabels,

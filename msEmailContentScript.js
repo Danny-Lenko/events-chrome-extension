@@ -14,52 +14,62 @@ const observerConfig = {
 
 const observer = new MutationObserver((mutationsList) => {
   const mails = document.getElementsByClassName("hcptT");
-  const noEmails = checkIsEmpty();
-
   const loadingOverlay = document.getElementById("loading-overlay");
 
   if (!mails[0] && controller < 1) {
-    let { loadingOverlay, countDownMessage, initialCountdown, loadingMessage } =
-      generateFallback();
-    loadingOverlay.appendChild(countDownMessage);
-
-    const interval = setInterval(() => {
-      initialCountdown--;
-      countDownMessage.textContent = initialCountdown;
-      loadingOverlay.appendChild(countDownMessage);
-
-      if (initialCountdown < 0) {
-        clearInterval(interval);
-
-        // the send message logic
-        sendMessage();
-        countDownMessage.remove();
-        loadingMessage.innerText =
-          "Failed filtering mails. Admin has been informed";
-      }
-    }, 1000);
-
-    document.body.appendChild(loadingOverlay);
-
-    controller++;
+    handleNoMails(mails);
   }
 
-  if (noEmails) {
+  if (checkIsEmpty(mails)) {
     loadingOverlay?.remove();
   }
 
-  [...mails].forEach((node) => {
-    const content = node.getAttribute("aria-label");
-
-    if (content && !content.match(reg)) {
-      node.parentElement.parentElement.style.display = "block";
-    }
-
-    if (content && content.match(reg)) {
-      node.parentElement.parentElement.style.display = "none";
-    }
-  });
+  filterMails(mails);
 });
+
+// ======================================================== utility functions
+
+function handleNoMails(mails) {
+  let { loadingOverlay, countDownMessage, initialCountdown, loadingMessage } =
+    generateFallback();
+
+  loadingOverlay.appendChild(countDownMessage);
+
+  const waitMailsInterval = setInterval(() => {
+    initialCountdown--;
+    countDownMessage.textContent = initialCountdown;
+    loadingOverlay.appendChild(countDownMessage);
+
+    if (checkIsEmpty(mails)) {
+      clearInterval(waitMailsInterval);
+    }
+
+    if (initialCountdown < 0) {
+      clearInterval(waitMailsInterval);
+
+      // the send message logic
+      sendMessage();
+      countDownMessage.remove();
+      loadingMessage.innerText =
+        "Failed filtering mails. Admin has been informed";
+    }
+  }, 1000);
+
+  document.body.appendChild(loadingOverlay);
+
+  controller++;
+}
+
+function checkIsEmpty(mails) {
+  const emptyEl = document.getElementById("EmptyState_MainMessage");
+  const secondaryEl = document.getElementsByClassName("TrKke")[0];
+
+  return (
+    mails[0] ||
+    (emptyEl && emptyEl.innerText !== "Select an item to read") ||
+    (secondaryEl && secondaryEl.innerHTML !== "Nothing is selected")
+  );
+}
 
 const sendMessage = async () => {
   try {
@@ -80,17 +90,25 @@ const sendMessage = async () => {
   }
 };
 
+function filterMails(mails) {
+  [...mails].forEach((node) => {
+    const content = node.getAttribute("aria-label");
+
+    if (content && !content.match(reg)) {
+      node.parentElement.parentElement.style.display = "block";
+    }
+
+    if (content && content.match(reg)) {
+      node.parentElement.parentElement.style.display = "none";
+    }
+  });
+}
+
 // ======================================================== content script
 
 (() => {
   observer.observe(observerNode, observerConfig);
 })();
-
-function checkIsEmpty() {
-  const emptyEl = document.getElementById("EmptyState_MainMessage");
-
-  return emptyEl?.innerText === "All done for the day";
-}
 
 // ======================================================= fallback screen settings
 
@@ -105,7 +123,6 @@ function generateFallback() {
     left: 0;
     width: 100%;
     height: 100%;
-    // background-color: #f0f0f0;
     background-color: #ffffff;
     display: flex;
     flex-direction: column;
