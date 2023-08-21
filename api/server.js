@@ -52,7 +52,6 @@ app.delete("/delete-event", deleteEvent(db));
 
 app.post("/error-ms-email", (req, res) => {
   try {
-    // createDraftEmail();
     authorize().then(createDraftEmail).catch(console.error);
     return res.status(200).json("Message sent");
   } catch (error) {

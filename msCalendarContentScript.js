@@ -10,7 +10,6 @@ const observerConfig = {
 };
 const observer = new MutationObserver((mutationsList) => {
   getEvents();
-  getTargetEvent();
 
   getActionName(targetEvent) === "Event deleted" ||
   getActionName(targetEvent) === "Event saved"
@@ -24,50 +23,26 @@ const observer = new MutationObserver((mutationsList) => {
 })();
 
 function getActionName(event) {
-  if (!event.summary || !event.summary || !event.summary) return;
+  if (!event.summary || !event.start || !event.end) return;
 
   const tooltip = document.querySelector(".Os1Gu");
 
   return tooltip ? tooltip.textContent : "Unknown";
 }
 
-function getTargetEvent() {
-  const summaryNode = document.querySelector(".rHI1u");
-  const timeNode = document.querySelector(".AhH9N");
+function getTargetEvent(e, summary, start, end) {
+  e.preventDefault();
 
-  if (summaryNode && timeNode) {
-    const regexPattern =
-      /^(\w{3}) (\d{4}-\d{2}-\d{2} \d{2}:\d{2}) - (\d{2}:\d{2})$/;
-
-    const match = timeNode.textContent.match(regexPattern);
-
-    if (match) {
-      const day = match[1];
-      const startDate = match[2];
-      const endTime = match[3];
-
-      const inputStart = `${day} ${startDate}`;
-      const inputEnd = `${day} ${startDate.substring(0, 11)} ${endTime}`;
-
-      const start = new Date(inputStart).toISOString();
-      const end = new Date(inputEnd).toISOString();
-
-      targetEvent = {
-        summary: `${microsoftPrefix}${summaryNode.textContent}`,
-        start,
-        end,
-      };
-    }
+  if ((summary, start, end)) {
+    targetEvent = {
+      summary,
+      start,
+      end,
+    };
   }
 }
 
 const deleteTargetEvent = async (event) => {
-  if (!event.summary || !event.start || !event.end) return;
-
-  // const tooltip = document.querySelector(".Os1Gu");
-
-  // if (tooltip && tooltip.textContent === "Event deleted") {
-
   const reqBody = JSON.stringify(event);
 
   try {
@@ -88,7 +63,6 @@ const deleteTargetEvent = async (event) => {
   }
 
   targetEvent = {};
-  // }
 };
 
 function getEvents() {
@@ -105,8 +79,17 @@ function getEvents() {
     const content = editContentEng(info);
 
     if (!content) return;
+
     const { start, end, summary, organizer, status, colorId, description } =
       content;
+
+    element.addEventListener("click", (e) => {
+      getTargetEvent(e, summary, start, end);
+    });
+
+    element.addEventListener("contextmenu", (e) => {
+      getTargetEvent(e, summary, start, end);
+    });
 
     events.push({
       start,
