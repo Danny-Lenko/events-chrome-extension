@@ -78,9 +78,9 @@ app.listen(port, async () => {
     authorize().then(listEvents).catch(console.error);
     authorize().then(listLabels).catch(console.error);
 
-    const dirPath = path.resolve(__dirname, "/config.json");
-    const configData = fs.readFileSync(dirPath, "utf-8");
-    console.log(JSON.parse(configData));
+    // const dirPath = path.resolve(__dirname, "/config.json");
+    // const configData = fs.readFileSync(dirPath, "utf-8");
+    // console.log(JSON.parse(configData));
   } catch (error) {
     console.error("Error fetching admin events:", error);
   }

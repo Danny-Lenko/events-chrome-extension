@@ -1,6 +1,6 @@
 {
-  "adminEmail": "admin@example.com",
-  "eMailServices": {
+  "adminEmail": "helloAdmin@example.com",
+  "emailServices": {
     "filterString": "football"
   }
 }

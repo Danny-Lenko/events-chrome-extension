@@ -116,7 +116,7 @@ function filterMails(mails) {
 
 function setFilterRegex() {
   const filterString =
-    fetchSeverRules() || fetchStorageRules() || mockFilterSetting;
+    fetchSeverRules() || getStorageFilterSetting() || mockFilterSetting;
 
   return new RegExp(filterString, "ig");
 }
@@ -128,15 +128,28 @@ async function fetchSeverRules() {
       throw new Error("Request failed with status: " + response.status);
     }
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
+    setStorageRules(data);
+    chrome.storage.local.get((storageData) =>
+      console.log(storageData.extensionRules)
+    );
+    // console.log(fetchStorageRules());
     return data;
   } catch (error) {
     console.error("Error fetching data:", error);
   }
 }
 
-async function fetchStorageRules() {
-  return chrome.storage.local.get(["meetingsData"], async (result) => result);
+function setStorageRules(data) {
+  chrome.storage.local.set({ extensionRules: data }, () => {
+    console.log("Extension rules saved to chrome.storage", data);
+  });
+}
+
+function getStorageFilterSetting() {
+  return chrome.storage.local.get(
+    (result) => result.extensionRules.emailServices.filterString
+  );
 }
 
 // ======================================================= fallback screen settings
