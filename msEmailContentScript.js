@@ -1,6 +1,7 @@
-const filterString = "football";
-const reg = new RegExp(filterString, "ig");
+const mockFilterSetting = "football";
+// const reg = new RegExp(filterString, "ig");
 
+let filterRegex;
 let controller = 0;
 
 // =========================================================== observer
@@ -27,7 +28,7 @@ const observer = new MutationObserver((mutationsList) => {
   filterMails(mails);
 });
 
-// ======================================================== utility functions
+// ======================================================== observer utility functions
 
 function handleNoMails(mails) {
   let { loadingOverlay, countDownMessage, initialCountdown, loadingMessage } =
@@ -94,11 +95,11 @@ function filterMails(mails) {
   [...mails].forEach((node) => {
     const content = node.getAttribute("aria-label");
 
-    if (content && !content.match(reg)) {
+    if (content && !content.match(filterRegex)) {
       node.parentElement.parentElement.style.display = "block";
     }
 
-    if (content && content.match(reg)) {
+    if (content && content.match(filterRegex)) {
       node.parentElement.parentElement.style.display = "none";
     }
   });
@@ -107,8 +108,36 @@ function filterMails(mails) {
 // ======================================================== content script
 
 (() => {
+  filterRegex = setFilterRegex();
   observer.observe(observerNode, observerConfig);
 })();
+
+// ======================================================= content script utilities
+
+function setFilterRegex() {
+  const filterString =
+    fetchSeverRules() || fetchStorageRules() || mockFilterSetting;
+
+  return new RegExp(filterString, "ig");
+}
+
+async function fetchSeverRules() {
+  try {
+    const response = await fetch("http://localhost:8080/rules");
+    if (!response.ok) {
+      throw new Error("Request failed with status: " + response.status);
+    }
+    const data = await response.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}
+
+async function fetchStorageRules() {
+  return chrome.storage.local.get(["meetingsData"], async (result) => result);
+}
 
 // ======================================================= fallback screen settings
 
