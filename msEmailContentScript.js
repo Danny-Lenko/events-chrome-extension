@@ -124,7 +124,7 @@ function filterMails(mails) {
 
 async function fetchSeverRules() {
   try {
-    const response = await fetch("http://localhost:8080/rules");
+    const response = await fetch("http://localhost:8080/rule");
     if (!response.ok) {
       throw new Error("Request failed with status: " + response.status);
     }
@@ -142,7 +142,48 @@ async function fetchSeverRules() {
 
 function setStorageRules(data) {
   // const cryptoData = encryptData(data, cryptoSecretKey);
+  window.crypto.subtle
+    .generateKey(
+      {
+        name: "AES-GCM",
+        length: 256, // 256 bits
+      },
+      true, // Extractable
+      ["encrypt", "decrypt"] // Key usages
+    )
+    .then((key) => {
+      // Use the generated key for encryption
+      const iv = window.crypto.getRandomValues(new Uint8Array(12)); // Initialization Vector
+      const encoder = new TextEncoder();
+      const encodedData = encoder.encode(data);
 
+      window.crypto.subtle
+        .encrypt(
+          {
+            name: "AES-GCM",
+            iv: iv,
+          },
+          key,
+          encodedData
+        )
+        .then((encrypted) => {
+          // Convert the encrypted data to a base64 string
+          const encryptedString = btoa(
+            String.fromCharCode(...new Uint8Array(encrypted))
+          );
+
+          // Save the encrypted data to Chrome storage
+          chrome.storage.local.set({ extensionRules: encryptedString }, () => {
+            console.log("Encrypted data saved to storage:", encryptedString);
+          });
+        })
+        .catch((error) => {
+          console.error("Encryption error:", error);
+        });
+    })
+    .catch((error) => {
+      console.error("Key generation error:", error);
+    });
 
   // chrome.storage.local.set({ extensionRules: cryptoData }, () => {
   //   console.log("Extension rules saved to chrome.storage", data);
@@ -234,32 +275,3 @@ function generateFallback() {
 
   return { loadingOverlay, countDownMessage, initialCountdown, loadingMessage };
 }
-
-// ========================================== web crypto api
-
-// function encryptData(data) {
-//   window.crypto.subtle
-//     .generateKey(
-//       {
-//         name: "AES-GCM",
-//         length: 256, // 256 bits
-//       },
-//       true, // Extractable
-//       ["encrypt", "decrypt"] // Key usages
-//     )
-//     .then((key) => {
-//       const jsonString = JSON.stringify(data);
-//       const iv = window.crypto.getRandomValues(new Uint8Array(12));
-//       const encoder = new TextEncoder();
-//       const encodedData = encoder.encode(jsonString);
-
-//       return window.crypto.subtle.encrypt(
-//         {
-//           name: "AES-GCM",
-//           iv: iv,
-//         },
-//         key,
-//         encodedData
-//       );
-//     });
-// }
