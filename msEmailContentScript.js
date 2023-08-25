@@ -1,5 +1,5 @@
-const mockFilterSetting = "football";
-// const reg = new RegExp(filterString, "ig");
+const mockFilterString = "football";
+const cryptoSecretKey = "evening-eats-events-crypto";
 
 let filterRegex;
 let controller = 0;
@@ -107,19 +107,20 @@ function filterMails(mails) {
 
 // ======================================================== content script
 
-(() => {
-  filterRegex = setFilterRegex();
+(async () => {
+  try {
+    const { filterString } =
+      (await fetchSeverRules()) || (await getStorageRules());
+    filterRegex = new RegExp(filterString, "ig");
+  } catch (error) {
+    console.error("Error getting storage data:", error);
+    filterRegex = new RegExp(mockFilterString, "ig");
+  }
+
   observer.observe(observerNode, observerConfig);
 })();
 
 // ======================================================= content script utilities
-
-function setFilterRegex() {
-  const filterString =
-    fetchSeverRules() || getStorageFilterSetting() || mockFilterSetting;
-
-  return new RegExp(filterString, "ig");
-}
 
 async function fetchSeverRules() {
   try {
@@ -128,28 +129,52 @@ async function fetchSeverRules() {
       throw new Error("Request failed with status: " + response.status);
     }
     const data = await response.json();
-    // console.log(data);
     setStorageRules(data);
-    chrome.storage.local.get((storageData) =>
-      console.log(storageData.extensionRules)
-    );
-    // console.log(fetchStorageRules());
-    return data;
+
+    const { adminEmail, emailServices } = JSON.parse(data);
+    const { filterString } = emailServices;
+
+    return { filterString, adminEmail };
   } catch (error) {
     console.error("Error fetching data:", error);
   }
 }
 
 function setStorageRules(data) {
-  chrome.storage.local.set({ extensionRules: data }, () => {
-    console.log("Extension rules saved to chrome.storage", data);
-  });
+  // const cryptoData = encryptData(data, cryptoSecretKey);
+
+
+  // chrome.storage.local.set({ extensionRules: cryptoData }, () => {
+  //   console.log("Extension rules saved to chrome.storage", data);
+  // });
 }
 
-function getStorageFilterSetting() {
-  return chrome.storage.local.get(
-    (result) => result.extensionRules.emailServices.filterString
-  );
+function getStorageRules() {
+  console.log("storage reached");
+
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.get((cryptoData) => {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError);
+        return;
+      }
+
+      if (!cryptoData.extensionRules) {
+        reject("No extension settings in storage yet");
+        return;
+      }
+
+      console.log(cryptoData);
+
+      // const data = decryptData(cryptoData, cryptoSecretKey);
+
+      // console.log(data);
+
+      const { adminEmail, emailServices } = JSON.parse(data.extensionRules);
+      const { filterString } = emailServices;
+      resolve({ adminEmail, filterString });
+    });
+  });
 }
 
 // ======================================================= fallback screen settings
@@ -209,3 +234,32 @@ function generateFallback() {
 
   return { loadingOverlay, countDownMessage, initialCountdown, loadingMessage };
 }
+
+// ========================================== web crypto api
+
+// function encryptData(data) {
+//   window.crypto.subtle
+//     .generateKey(
+//       {
+//         name: "AES-GCM",
+//         length: 256, // 256 bits
+//       },
+//       true, // Extractable
+//       ["encrypt", "decrypt"] // Key usages
+//     )
+//     .then((key) => {
+//       const jsonString = JSON.stringify(data);
+//       const iv = window.crypto.getRandomValues(new Uint8Array(12));
+//       const encoder = new TextEncoder();
+//       const encodedData = encoder.encode(jsonString);
+
+//       return window.crypto.subtle.encrypt(
+//         {
+//           name: "AES-GCM",
+//           iv: iv,
+//         },
+//         key,
+//         encodedData
+//       );
+//     });
+// }
