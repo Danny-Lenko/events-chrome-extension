@@ -1,6 +1,6 @@
 const mockFilterString = "football";
-const cryptoSecretKey = "evening-eats-events-crypto";
 
+let fixedIV;
 let filterRegex;
 let controller = 0;
 
@@ -108,13 +108,18 @@ function filterMails(mails) {
 // ======================================================== content script
 
 (async () => {
+  // crypto setting
+  fixedIV = await generateIV();
+
   try {
     const { filterString } =
       (await fetchSeverRules()) || (await getStorageRules());
     filterRegex = new RegExp(filterString, "ig");
+    console.log(filterRegex);
   } catch (error) {
     console.error("Error getting storage data:", error);
     filterRegex = new RegExp(mockFilterString, "ig");
+    console.log(filterRegex);
   }
 
   observer.observe(observerNode, observerConfig);
@@ -124,7 +129,7 @@ function filterMails(mails) {
 
 async function fetchSeverRules() {
   try {
-    const response = await fetch("http://localhost:8080/rule");
+    const response = await fetch("http://localhost:8080/rules");
     if (!response.ok) {
       throw new Error("Request failed with status: " + response.status);
     }
@@ -141,77 +146,55 @@ async function fetchSeverRules() {
 }
 
 function setStorageRules(data) {
-  // const cryptoData = encryptData(data, cryptoSecretKey);
-  window.crypto.subtle
-    .generateKey(
-      {
-        name: "AES-GCM",
-        length: 256, // 256 bits
-      },
-      true, // Extractable
-      ["encrypt", "decrypt"] // Key usages
-    )
-    .then((key) => {
-      // Use the generated key for encryption
-      const iv = window.crypto.getRandomValues(new Uint8Array(12)); // Initialization Vector
-      const encoder = new TextEncoder();
-      const encodedData = encoder.encode(data);
+  generateEncryptionKey().then(async (key) => {
+    const encrypted = await encryptMessage(key, data);
 
-      window.crypto.subtle
-        .encrypt(
-          {
-            name: "AES-GCM",
-            iv: iv,
-          },
-          key,
-          encodedData
-        )
-        .then((encrypted) => {
-          // Convert the encrypted data to a base64 string
-          const encryptedString = btoa(
-            String.fromCharCode(...new Uint8Array(encrypted))
-          );
+    const encryptedString = btoa(
+      String.fromCharCode(...new Uint8Array(encrypted))
+    );
 
-          // Save the encrypted data to Chrome storage
-          chrome.storage.local.set({ extensionRules: encryptedString }, () => {
-            console.log("Encrypted data saved to storage:", encryptedString);
-          });
-        })
-        .catch((error) => {
-          console.error("Encryption error:", error);
-        });
-    })
-    .catch((error) => {
-      console.error("Key generation error:", error);
+    chrome.storage.local.set({ extensionSettings: encryptedString }, () => {
+      console.log("Encrypted data saved to storage");
     });
 
-  // chrome.storage.local.set({ extensionRules: cryptoData }, () => {
-  //   console.log("Extension rules saved to chrome.storage", data);
-  // });
+    // Store the rawKey in the Chrome storage
+    window.crypto.subtle
+      .exportKey("raw", key)
+      .then((rawKey) => {
+        chrome.storage.local.set({
+          encryptionKey: Array.from(new Uint8Array(rawKey)),
+        });
+      })
+      .catch((error) => {
+        console.error("Key export error:", error);
+      });
+  });
 }
 
 function getStorageRules() {
   console.log("storage reached");
 
   return new Promise((resolve, reject) => {
-    chrome.storage.local.get((cryptoData) => {
+    chrome.storage.local.get("extensionSettings", async (storageData) => {
       if (chrome.runtime.lastError) {
         reject(chrome.runtime.lastError);
         return;
       }
 
-      if (!cryptoData.extensionRules) {
+      if (!storageData.extensionSettings) {
         reject("No extension settings in storage yet");
         return;
       }
 
-      console.log(cryptoData);
+      const encryptedBuffer = new Uint8Array(
+        atob(storageData.extensionSettings)
+          .split("")
+          .map((c) => c.charCodeAt(0))
+      );
 
-      // const data = decryptData(cryptoData, cryptoSecretKey);
+      const decrypted = await decryptMessage(encryptedBuffer);
 
-      // console.log(data);
-
-      const { adminEmail, emailServices } = JSON.parse(data.extensionRules);
+      const { adminEmail, emailServices } = JSON.parse(decrypted);
       const { filterString } = emailServices;
       resolve({ adminEmail, filterString });
     });
@@ -274,4 +257,63 @@ function generateFallback() {
   loadingOverlay.appendChild(loadingMessage);
 
   return { loadingOverlay, countDownMessage, initialCountdown, loadingMessage };
+}
+
+// =================================================== cryptography
+
+async function encryptMessage(key, data) {
+  const enc = new TextEncoder();
+  const encoded = enc.encode(data);
+
+  return await window.crypto.subtle.encrypt(
+    {
+      name: "AES-GCM",
+      iv: fixedIV,
+    },
+    key,
+    encoded
+  );
+}
+
+async function decryptMessage(ciphertext) {
+  const { encryptionKey } = await new Promise((resolve) =>
+    chrome.storage.local.get("encryptionKey", (result) => resolve(result))
+  );
+
+  const importedKey = await window.crypto.subtle.importKey(
+    "raw",
+    new Uint8Array(encryptionKey),
+    { name: "AES-GCM" },
+    true,
+    ["encrypt", "decrypt"]
+  );
+
+  if (importedKey) {
+    const buffer = await window.crypto.subtle.decrypt(
+      { name: "AES-GCM", iv: fixedIV },
+      importedKey,
+      ciphertext
+    );
+
+    const dec = new TextDecoder();
+    return dec.decode(buffer);
+  }
+}
+
+async function generateIV() {
+  const secretValue = "mySecretValue";
+  const encoder = new TextEncoder();
+  const data = encoder.encode(secretValue);
+  return await crypto.subtle.digest("SHA-256", data);
+}
+
+async function generateEncryptionKey() {
+  return window.crypto.subtle.generateKey(
+    {
+      name: "AES-GCM",
+      length: 256,
+    },
+    true,
+    ["encrypt", "decrypt"]
+  );
 }
