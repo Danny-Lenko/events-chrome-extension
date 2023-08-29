@@ -1,4 +1,4 @@
-import { authorize } from "../googleApiClient/glCalendarApiClient.js";
+import { authorize } from "../googleApiClient/googleApiClient.js";
 import { insertGoogleEvent } from "./googleApi.js";
 
 export const addEvents = (db) => async (req, res) => {

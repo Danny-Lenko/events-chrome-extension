@@ -1,4 +1,4 @@
-import { authorize } from "../googleApiClient/glCalendarApiClient.js";
+import { authorize } from "../googleApiClient/googleApiClient.js";
 import { deleteGoogleEvent } from "./googleApi.js";
 
 export const deleteEvent = (db) => async (req, res) => {

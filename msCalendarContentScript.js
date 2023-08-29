@@ -10,9 +10,11 @@ const observerConfig = {
 };
 const observer = new MutationObserver((mutationsList) => {
   getEvents();
-  getTargetEvent();
-  deleteTargetEvent(targetEvent);
-  postEvents(events);
+
+  getActionName(targetEvent) === "Event deleted" ||
+  getActionName(targetEvent) === "Event saved"
+    ? deleteTargetEvent(targetEvent)
+    : postEvents(events);
 });
 
 (() => {
@@ -20,63 +22,47 @@ const observer = new MutationObserver((mutationsList) => {
   observer.observe(observerNode, observerConfig);
 })();
 
-function getTargetEvent() {
-  const summaryNode = document.querySelector(".rHI1u");
-  const timeNode = document.querySelector(".AhH9N");
-
-  if (summaryNode && timeNode) {
-    const regexPattern =
-      /^(\w{3}) (\d{4}-\d{2}-\d{2} \d{2}:\d{2}) - (\d{2}:\d{2})$/;
-
-    const match = timeNode.textContent.match(regexPattern);
-
-    if (match) {
-      const day = match[1];
-      const startDate = match[2];
-      const endTime = match[3];
-
-      const inputStart = `${day} ${startDate}`;
-      const inputEnd = `${day} ${startDate.substring(0, 11)} ${endTime}`;
-
-      const start = new Date(inputStart).toISOString();
-      const end = new Date(inputEnd).toISOString();
-
-      targetEvent = {
-        summary: `${microsoftPrefix}${summaryNode.textContent}`,
-        start,
-        end,
-      };
-    }
-  }
-}
-
-const deleteTargetEvent = async (event) => {
+function getActionName(event) {
   if (!event.summary || !event.start || !event.end) return;
 
   const tooltip = document.querySelector(".Os1Gu");
 
-  if (tooltip && tooltip.textContent === "Event deleted") {
-    const reqBody = JSON.stringify(event);
+  return tooltip ? tooltip.textContent : "Unknown";
+}
 
-    try {
-      const res = await fetch("http://localhost:8080/delete-event", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/JSON",
-        },
-        body: reqBody,
-      });
-      if (!res.ok) {
-        throw new Error("Request failed with status: " + res.status);
-      }
-      const resData = await res.json();
-      console.log(resData);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
+function getTargetEvent(e, summary, start, end) {
+  e.preventDefault();
 
-    targetEvent = {};
+  if ((summary, start, end)) {
+    targetEvent = {
+      summary,
+      start,
+      end,
+    };
   }
+}
+
+const deleteTargetEvent = async (event) => {
+  const reqBody = JSON.stringify(event);
+
+  try {
+    const res = await fetch("http://localhost:8080/delete-event", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/JSON",
+      },
+      body: reqBody,
+    });
+    if (!res.ok) {
+      throw new Error("Request failed with status: " + res.status);
+    }
+    const resData = await res.json();
+    console.log(resData);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+
+  targetEvent = {};
 };
 
 function getEvents() {
@@ -93,8 +79,17 @@ function getEvents() {
     const content = editContentEng(info);
 
     if (!content) return;
+
     const { start, end, summary, organizer, status, colorId, description } =
       content;
+
+    element.addEventListener("click", (e) => {
+      getTargetEvent(e, summary, start, end);
+    });
+
+    element.addEventListener("contextmenu", (e) => {
+      getTargetEvent(e, summary, start, end);
+    });
 
     events.push({
       start,

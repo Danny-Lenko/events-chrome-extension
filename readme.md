@@ -128,8 +128,11 @@ and extends their functionality.
 
   3. `\c extension;`.
 
-  4. `CREATE TABLE events (
-    id SERIAL PRIMARY KEY,
+  4. `CREATE EXTENSION IF NOT EXISTS "uuid-ossp";`
+
+  5. `CREATE TABLE events (
+    id UUID DEFAULT public.uuid_generate_v4() PRIMARY KEY,
+    summary VARCHAR(255),
     start_time TIMESTAMP WITH TIME ZONE NOT NULL,
     end_time TIMESTAMP WITH TIME ZONE NOT NULL,
     description TEXT NOT NULL,
@@ -138,7 +141,7 @@ and extends their functionality.
     color_id INTEGER NOT NULL,
   );`
 
-  5. ALTER TABLE events
+  6. ALTER TABLE events
   ADD CONSTRAINT unique_event_description_time_range
   UNIQUE (description, start_time, end_time);
 
