@@ -10,11 +10,9 @@ const observerConfig = {
 };
 const observer = new MutationObserver((mutationsList) => {
   getEvents();
-
-  getActionName(targetEvent) === "Event deleted" ||
-  getActionName(targetEvent) === "Event saved"
-    ? deleteTargetEvent(targetEvent)
-    : postEvents(events);
+  getTargetEvent();
+  deleteTargetEvent(targetEvent);
+  postEvents(events);
 });
 
 (() => {
@@ -22,47 +20,63 @@ const observer = new MutationObserver((mutationsList) => {
   observer.observe(observerNode, observerConfig);
 })();
 
-function getActionName(event) {
-  if (!event.summary || !event.start || !event.end) return;
+function getTargetEvent() {
+  const descriptionNode = document.querySelector(".rHI1u");
+  const timeNode = document.querySelector(".AhH9N");
 
-  const tooltip = document.querySelector(".Os1Gu");
+  if (descriptionNode && timeNode) {
+    const regexPattern =
+      /^(\w{3}) (\d{4}-\d{2}-\d{2} \d{2}:\d{2}) - (\d{2}:\d{2})$/;
 
-  return tooltip ? tooltip.textContent : "Unknown";
-}
+    const match = timeNode.textContent.match(regexPattern);
 
-function getTargetEvent(e, summary, start, end) {
-  e.preventDefault();
+    if (match) {
+      const day = match[1];
+      const startDate = match[2];
+      const endTime = match[3];
 
-  if ((summary, start, end)) {
-    targetEvent = {
-      summary,
-      start,
-      end,
-    };
+      const inputStart = `${day} ${startDate}`;
+      const inputEnd = `${day} ${startDate.substring(0, 11)} ${endTime}`;
+
+      const start = new Date(inputStart).toISOString();
+      const end = new Date(inputEnd).toISOString();
+
+      targetEvent = {
+        description: `${microsoftPrefix}${descriptionNode.textContent}`,
+        start,
+        end,
+      };
+    }
   }
 }
 
 const deleteTargetEvent = async (event) => {
-  const reqBody = JSON.stringify(event);
+  if (!event.description || !event.start || !event.end) return;
 
-  try {
-    const res = await fetch("http://localhost:8080/delete-event", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/JSON",
-      },
-      body: reqBody,
-    });
-    if (!res.ok) {
-      throw new Error("Request failed with status: " + res.status);
+  const tooltip = document.querySelector(".Os1Gu");
+
+  if (tooltip && tooltip.textContent === "Event deleted") {
+    const reqBody = JSON.stringify(event);
+
+    try {
+      const res = await fetch("http://localhost:8080/delete-event", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/JSON",
+        },
+        body: reqBody,
+      });
+      if (!res.ok) {
+        throw new Error("Request failed with status: " + res.status);
+      }
+      const resData = await res.json();
+      console.log(resData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
-    const resData = await res.json();
-    console.log(resData);
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
 
-  targetEvent = {};
+    targetEvent = {};
+  }
 };
 
 function getEvents() {
@@ -79,26 +93,15 @@ function getEvents() {
     const content = editContentEng(info);
 
     if (!content) return;
-
-    const { start, end, summary, organizer, status, colorId, description } =
-      content;
-
-    element.addEventListener("click", (e) => {
-      getTargetEvent(e, summary, start, end);
-    });
-
-    element.addEventListener("contextmenu", (e) => {
-      getTargetEvent(e, summary, start, end);
-    });
+    const { start, end, description, organizer, status, colorId } = content;
 
     events.push({
       start,
       end,
-      summary,
+      description,
       organizer,
       status,
       colorId,
-      description,
     });
   });
 }
@@ -149,7 +152,7 @@ function formatEvent(inputString) {
   const originalDate = match[1];
   const startTime = match[2];
   const endTime = match[3];
-  const summary = match[4];
+  const description = match[4];
   const status = match[5];
 
   const start = new Date(`${originalDate} ${startTime}`).toISOString();
@@ -158,11 +161,10 @@ function formatEvent(inputString) {
   return {
     start,
     end,
-    summary: microsoftPrefix + summary.trim(),
+    description: microsoftPrefix + description.trim(),
     organizer: "User",
     status: status === "Busy" ? "confirmed" : "tentative",
     colorId: "1",
-    description: "",
   };
 }
 
@@ -171,7 +173,7 @@ function formatInvitation(match) {
   const originalDate = match[1];
   const startTime = match[2];
   const endTime = match[3];
-  const summary = match[4];
+  const description = match[4];
   const organizerMatch = match[5];
   const status = match[6];
 
@@ -183,10 +185,9 @@ function formatInvitation(match) {
   return {
     start,
     end,
-    summary: microsoftPrefix + summary.trim(),
+    description: microsoftPrefix + description.trim(),
     organizer,
     status: status === "Busy" ? "confirmed" : "tentative",
     colorId: "1",
-    description: "",
   };
 }

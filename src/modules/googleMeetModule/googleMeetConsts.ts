@@ -1,9 +1,5 @@
 
-export const getFakeData = () => (req, res) => {
-    res.json(mockData)
-}
-
-const mockData = {
+export const mockData = {
   participants: [
     {
       participantName: "Libertarian Personalist",
@@ -96,4 +92,4 @@ const mockData = {
       }
     },
   },
-};
+}

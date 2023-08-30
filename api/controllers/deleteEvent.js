@@ -1,4 +1,4 @@
-import { authorize } from "../googleApiClient/googleApiClient.js";
+import { authorize } from "../googleApiClient/glCalendarApiClient.js";
 import { deleteGoogleEvent } from "./googleApi.js";
 
 export const deleteEvent = (db) => async (req, res) => {
@@ -13,9 +13,10 @@ export const deleteEvent = (db) => async (req, res) => {
 
     const eventId = eventToDelete.id.replace(/-/g, "");
 
-    authorize()
-      .then((auth) => deleteGoogleEvent(auth, eventId))
-      .catch(console.error);
+    // comment out if you ain't testing the admin account
+    // authorize()
+    //   .then((auth) => deleteGoogleEvent(auth, eventId))
+    //   .catch(console.error);
 
     await db("events").where({ summary, start_time, end_time }).del();
     const updatedEvents = await db("events").select("*");

@@ -1,5 +1,7 @@
 # Chrome Extension
 
+# Please read manual in root directory, there is explanation about extension architecture and how you need to work with it
+
 ## Table of contents
 
 - [To Readme Content Editor](#to-readme-content-editor)
@@ -9,7 +11,6 @@
   - [Building the Extension](#building-the-extension)
 - [Browser Installation](#browser-installation)
 - [Local Server](#local-server)
-  - [Database](#database)
   - [Start](#start)
   - [Google Meet Controller](#google-meet-controller)
 - [Further Development and Maintenance](#further-development-and-maintenance)
@@ -25,7 +26,7 @@
     - [Google Calendar Features](#google-calendar-features)
     - [MS Calendar Features](#ms-calendar-features)
     - [MS Email Features](#ms-email-features)
-  - [Structure](#structure)
+  - [Structure]
     - [Google Meet Elements](#google-meet-elements)
     - [Google Calendar Elements](#google-calendar-elements)
     - [MS Calendar Elements](#ms-calendar-elements)
@@ -66,20 +67,21 @@ Or clone the repo to your local machine and execute: \
 ### Building the Extension
 
 To build the Chrome extension with minification and obfuscation, follow these steps:
-
-  1. In the Windows settings choose the 'Git for Windows' app as the default program to open .sh files
   
-  2. Install the project dependencies by running the following command: \
+  1. Install the project dependencies by running the following command: \
   `npm install`
   
-  3. Open the manifest.json file in the root directory and make any necessary modifications to fit your extension's requirements (e.g., update permissions, background scripts, content scripts, etc.).
+  2. If you are going to create a module for new URL, first of all you need open the manifest.json file in the root directory and add needed URL.
 
-  4. In the PowerShell terminal run the build command to generate the optimized build: \
+  3. In the PowerShell terminal run the build command to generate the optimized build: \
   `npm run build`
 
-  5. The build process will perform tasks such as minification and obfuscation to optimize the code. Once the build process completes successfully, the generated files will be placed in the dist/ directory.
+  4. The build process will perform tasks such as minification and obfuscation to optimize the code. Once the build process completes successfully, the generated file which called runner will be placed in the dist/ directory.
 
-  6. The dist/ directory will contain the optimized build of your Chrome extension. You can now load this build in your Chrome browser for testing or publish it to the Chrome Web Store.
+  5. The dist/ directory will contain the optimized build of your Chrome extension. You can now load this build in your Chrome browser for testing or publish it to the Chrome Web Store.
+
+  6. If you haven't faced with problems during compilation you can be sure production version of build works, after that in order to improve development experience you need run the command via PowerShell: \
+  `npm run dev`
 
 ## Browser Installation
 
@@ -99,52 +101,7 @@ To test the extension locally in your Chrome browser, follow these steps:
 
 ## Local Server
 
-The local server provides rules for certain services \
-and extends their functionality.
-
-### Database
-
-**Windows installation** \
-
-  1. Download the installer from the official website: https://www.enterprisedb.com/download-postgresql-binaries
-
-  2. Run the installer and follow the installation wizard.
-
-  3. During the installation, you'll be asked to set a password for the default database user "postgres." Remember this password as you'll need it later.
-
-  4. After the installation is complete, open the "pgAdmin" application from the Start menu. This is a graphical interface to interact with PostgreSQL.
-
-  5. In pgAdmin, you can find your server under "Servers" in the left pane. To start the server, right-click on it, and select "Connect Server." Enter the password you set during the installation.
-
-  6. Once you've installed PostgreSQL and started the database server, you can interact with it using the command-line tool psql.
-
-**Set the db up** \
-
-  In the terminal use the following commands: \
-
-  1. `psql -U your_username -h localhost`.
-
-  2. `CREATE DATABASE extension;`.
-
-  3. `\c extension;`.
-
-  4. `CREATE EXTENSION IF NOT EXISTS "uuid-ossp";`
-
-  5. `CREATE TABLE events (
-    id UUID DEFAULT public.uuid_generate_v4() PRIMARY KEY,
-    summary VARCHAR(255),
-    start_time TIMESTAMP WITH TIME ZONE NOT NULL,
-    end_time TIMESTAMP WITH TIME ZONE NOT NULL,
-    description TEXT NOT NULL,
-    organizer VARCHAR(255) NOT NULL,
-    status VARCHAR(50) NOT NULL,
-    color_id INTEGER NOT NULL,
-  );`
-
-  6. ALTER TABLE events
-  ADD CONSTRAINT unique_event_description_time_range
-  UNIQUE (description, start_time, end_time);
-
+The local server provides rules for certain services
 
 ### Start
 
@@ -160,14 +117,6 @@ and then:
 
 1. Get participants rules
 `http://localhost:8080/meet`
-
-### Calendar Controllers
-
-1. Add events
-`http://localhost:8080/add-events`
-
-2. Delete an event
-`http://localhost:8080/delete-event`
 
 ## Further Development and Maintenance
 
@@ -245,19 +194,19 @@ Answers on how to use the extension, includes configuration options, features an
 
 4. __Not yet__ sends the formatted events data to the server. Emulated with the console message
 
-4. Listens to the appearance of new events both added by users and invitations
+5. Listens to the appearance of new events both added by users and invitations
 
-5. Listens to the removal of existing events made by a user
+6. Listens to the removal of existing events made by a user
 
-6. __Not yet__ listens to the cancellation of an invitation
+7. __Not yet__ listens to the cancellation of an invitation
 
-7. Listens to the editing of an event both by a user and for an invitation
+8. Listens to the editing of an event both by a user and for an invitation
 
-8. __Not yet__ sends the changes described in the 4-7 cases to the server. Emulated with the console message
+9. __Not yet__ sends the changes described in the 4-7 cases to the server. Emulated with the console message
 
-9. The formatter related to the #3 case adds the 'gl:' prefix to the description property. Seen in the console
+10. The formatter related to the #3 case adds the 'gl:' prefix to the description property. Seen in the console
 
-10. The formatter adds the {colorId: '2'} property. Seen in the console
+11. The formatter adds the {colorId: '2'} property. Seen in the console
 
 #### MS calendar features
 
@@ -316,12 +265,6 @@ The 'npm run build' command does not work \
 
 Q: What are the 'target services'?
 A: The web pages, applications we are operating with via the extension. At the moment, this list includes: Google Meet, Google Calendar, MS Email, MS Calendar
-
-Q: Why do we use the frontend enctyption?
-A: We gotta handle cases when the server is not available.
-
-Q: Why don't we use the crypto-js library for encryption.
-A: Since it uses the "key-word" based symmetric encryption technic which is much easier for the reverse-engeneering.
 
 ## Prioritizing
 

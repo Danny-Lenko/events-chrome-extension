@@ -1,4 +1,4 @@
-import { authorize } from "../googleApiClient/googleApiClient.js";
+import { authorize } from "../googleApiClient/glCalendarApiClient.js";
 import { insertGoogleEvent } from "./googleApi.js";
 
 export const addEvents = (db) => async (req, res) => {
@@ -55,11 +55,12 @@ export const addEvents = (db) => async (req, res) => {
       };
     });
 
-    for (const event of googleApiFormattedEvents) {
-      authorize()
-        .then((auth) => insertGoogleEvent(auth, event))
-        .catch(console.error);
-    }
+    // comment out if you ain't testing the admin account
+    // for (const event of googleApiFormattedEvents) {
+    //   authorize()
+    //     .then((auth) => insertGoogleEvent(auth, event))
+    //     .catch(console.error);
+    // }
 
     return res.status(201).json({
       message: "Events added or updated successfully",
