@@ -1,6 +1,6 @@
 import { GoogleMeetChromeStorageInterface } from "../types/googleMeetInterfaces";
 import {MeetingsData, Participant} from "../types/googleMeetTypes";
-import {GoogleMeetTopics} from "../googleMeetConsts";
+import {GoogleMeetTopics} from "../types/googleMeetTypes";
 
 export class GoogleMeetChromeStorageService implements GoogleMeetChromeStorageInterface {
 
@@ -17,7 +17,7 @@ export class GoogleMeetChromeStorageService implements GoogleMeetChromeStorageIn
 
     private setMeetingsData = (data: MeetingsData) => {
         chrome.storage.local.set({ meetingsData: data }, () => {
-            console.log('Meetings data saved to chrome.storage', data);
+            //console.log('Meetings data saved to chrome.storage', data);
         });
     };
 

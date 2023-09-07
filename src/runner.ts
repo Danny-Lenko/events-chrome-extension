@@ -1,25 +1,25 @@
-import { modules } from './modules';
-import { ExtensionCoreModule } from './core/extensionCoreModule';
-import { ExtensionConfig } from './core/decorators/ExtensionConfig';
-import { extensionConfigType } from './core/coreInterfaces';
+import {modules} from "./modules";
+import {ExtensionCoreModule} from "./core/extensionCoreModule";
+import {ExtensionConfig} from "./core/decorators/ExtensionConfig";
+import {extensionConfigType} from "./core/coreInterfaces";
 
 const config: extensionConfigType = {
-   functionalities: modules,
-};
+    functionalities: modules
+}
 
 @ExtensionConfig(config)
 class Config {
-   public static config: extensionConfigType;
+    public static config: extensionConfigType;
 
-   static getConfig() {
-      return this.config;
-   }
+    static getConfig() {
+        return this.config;
+    }
 
-   static setConfig(config: extensionConfigType) {
+    static setConfig(config: extensionConfigType) {
       this.config = config;
-   }
+    }
 }
 
-const extension = new ExtensionCoreModule(Config.getConfig());
+const extension = new ExtensionCoreModule(Config.getConfig())
 
-extension.setup();
+extension.setup()

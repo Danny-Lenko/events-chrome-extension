@@ -26,6 +26,7 @@ export class ModuleProvider<T> {
     }
 
     private adaptExecutors(params: ModuleDecoratorOptions<T>) {
+        if (!params.executors || params.executors.length === 0) return params.executors
         return params.executors.map(m => this.verifyMethod(params, m))
     }
 
@@ -38,8 +39,6 @@ export class ModuleProvider<T> {
           throw Error('Error in method has occurred if you have not followed these recommendations: 1) Use function declaration instead of function expression; 2) Use ServiceDecorator; (at moduleProvider)')
         }
 
-
-        let newMethod = method
         let verify: boolean
 
         for (let prop in params.services) {
@@ -49,12 +48,10 @@ export class ModuleProvider<T> {
           verify = inheritedClassNameMethod === serviceName
 
           if (verify) {
-            newMethod = () => method()
             break
           } else {
             verify = this.verifyWithDerivativeServices<T>(service, inheritedClassNameMethod)
             if (verify) {
-              newMethod = () => method()
               break
             }
           }

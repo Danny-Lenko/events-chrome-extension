@@ -1,13 +1,13 @@
-import {MicroMailInterface} from "../types/microMailInterfaces";
+import { MicroMailInterface } from '../types/microMailInterfaces';
+import { ServiceDecorator } from '../../../core/decorators/ServiceDecorator';
 
+@ServiceDecorator
 export class MicroMailService implements MicroMailInterface {
+   constructor() {}
 
-  constructor(
-
-  ) {}
-
-  run() {
-    return console.log('Micro Mail service is working ---------------------!')
-  }
-
+   run() {
+      return console.log(
+         'Micro Mail service is working ---------------------!',
+      );
+   }
 }

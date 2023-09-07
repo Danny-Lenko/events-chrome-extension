@@ -1,15 +1,13 @@
-import {MicroCalendarInterface} from "../types/microCalendarInterfaces";
-import {ServiceDecorator} from "../../../core/decorators/ServiceDecorator";
+import { MicroCalendarInterface } from '../types/microCalendarInterfaces';
+import { ServiceDecorator } from '../../../core/decorators/ServiceDecorator';
 
 @ServiceDecorator
 export class MicroCalendarService implements MicroCalendarInterface {
+   constructor() {}
 
-  constructor(
-
-  ) {}
-
-  run() {
-    return console.log('Micro Calendar service is working ---------------------!')
-  }
-
+   run() {
+      return console.log(
+         'Micro Calendar service is working ---------------------!',
+      );
+   }
 }

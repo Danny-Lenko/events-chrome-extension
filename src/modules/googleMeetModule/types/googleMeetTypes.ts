@@ -45,4 +45,17 @@ export interface MeetingsData {
 
 export type currentMeetingTitleType = GoogleMeetTopics[number] | 'Topic is absent'
 
-export type exitConfigListType = Omit<Participant, 'assignedTo'>[]
+export type exitConfigListType = Omit<Participant, 'assignedTo'>[] | []
+
+export type dataTypeMainService = {
+  meetingsData: MeetingsData | boolean,
+  currentMeetingTitle: currentMeetingTitleType,
+  exitConfigList: exitConfigListType,
+}
+
+export type meetParticipantsTypeMainService = {
+  maxPartyQty: number
+  previousPartyQty: number
+  party: string[]
+  guests: string[]
+}

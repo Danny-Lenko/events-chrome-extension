@@ -62,6 +62,22 @@ chrome.runtime.onMessage.addListener((message) => {
     keepTabActiveMode = true;
     setActiveTab();
   }
+  if (message.action === 'disableFullScreen') {
+    chrome.tabs.query(
+      { active: true, windowType: "normal", currentWindow: true },
+      (tab) => {
+        let currentTabId = currentTabId = tab[0].id;
+
+        const currentUrl = tab[0].url;
+        if (currentUrl.includes("meet.google.com")) {
+          const activeWindowId = tab[0].windowId;
+          chrome.tabs.update(currentTabId, {active: true}, () => {
+            chrome.windows.update(activeWindowId, {state: 'normal'});
+          });
+        }
+      })
+
+  }
 });
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {

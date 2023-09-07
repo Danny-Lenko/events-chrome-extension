@@ -65,7 +65,7 @@ export class GoogleMeetUtilsService implements GoogleMeetUtilsInterface {
       await this.clickAndWait(close, 0);
     }
 
-    public async disableParticipants(participantsBtn, disabledParticipants) {
+    public  disableParticipants = async (participantsBtn, disabledParticipants) => {
       if (!disabledParticipants) {
         disabledParticipants = true
 
@@ -73,9 +73,25 @@ export class GoogleMeetUtilsService implements GoogleMeetUtilsInterface {
         participantsBtn.disabled = disabledParticipants
 
         const closeBlock = document.querySelectorAll('.CYZUZd div')[1]
-        const close = closeBlock.querySelector('span button') as HTMLButtonElement;
+        const close: HTMLButtonElement = closeBlock.querySelector('span button')
         close.disabled = disabledParticipants
       }
+    }
+
+    public handleManyClick = (element: HTMLElement, clickQty: number, func: Function): boolean => {
+      let throttle = false
+      element.addEventListener('click', function (e) {
+        if (!throttle && e.detail === clickQty) {
+          throttle = true
+          func()
+          setTimeout(function () {
+            throttle = false
+            element.removeEventListener('click', this)
+          }, 100);
+        }
+      })
+
+      return throttle
     }
 
 }

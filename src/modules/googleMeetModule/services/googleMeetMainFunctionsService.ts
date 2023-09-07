@@ -31,6 +31,7 @@ export class GoogleMeetMainFunctionsService implements GoogleMeetMainFunctionsIn
     }
 
     public getMeetTopic = (meetingsData): currentMeetingTitleType => {
+        console.log(meetingsData)
         const startTimes = Object.keys((meetingsData as MeetingsData).googlemeetRules)
         const localeCurrentDate = new Date();
         const nextDayTime = new Date()
