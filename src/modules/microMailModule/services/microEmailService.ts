@@ -1,13 +1,18 @@
 import {
+   MicroEmailAlarmInterface,
+   MicroEmailFallbackInterface,
    MicroEmailInterface,
    MicroEmailProcessMailsInterface,
 } from '../types/microEmailInterfaces';
 import { ServiceDecorator } from '../../../core/decorators/ServiceDecorator';
 import { MicroEmailProcessMailsService } from './microEmailProcessMailsService';
+import { MicroEmailFallbackService } from './microEmailFallbackService';
+import { MicroEmailAlarmService } from './microEmailAlarmService';
 
 @ServiceDecorator
 export class MicroEmailService implements MicroEmailInterface {
-   private executionIsAllowed = true;
+   public executionIsAllowed = true;
+   private filterString = 'hello';
 
    private readonly observerTargetNode: HTMLElement = document.body;
    private readonly observerConfig: Record<string, boolean> = {
@@ -16,28 +21,52 @@ export class MicroEmailService implements MicroEmailInterface {
    };
 
    constructor(
-      public NoMailsService: MicroEmailProcessMailsInterface = new MicroEmailProcessMailsService(),
+      public ProcessMailsService: MicroEmailProcessMailsInterface = new MicroEmailProcessMailsService(),
+      public FallbackService: MicroEmailFallbackInterface = new MicroEmailFallbackService(),
+      public AlarmService: MicroEmailAlarmInterface = new MicroEmailAlarmService(),
    ) {}
 
    private observer = new MutationObserver(() => {
-      const mails = document.getElementsByClassName('hcpt');
+      const mails = document.getElementsByClassName('hcptT');
       const loadingOverlay = document.getElementById('loading-overlay');
 
-      console.log(mails);
-
       if (!mails[0] && this.executionIsAllowed) {
-         this.NoMailsService.handleNoMails(mails);
-         this.executionIsAllowed = false;
+         this.handleNoMails(mails);
       }
 
-      // if (checkIsEmpty(mails)) {
-      //    loadingOverlay?.remove();
-      // }
+      if (this.ProcessMailsService.confirmIsEmpty(mails)) {
+         loadingOverlay?.remove();
+      }
 
-      // filterMails(mails);
+      this.ProcessMailsService.filterMails(mails, this.filterString);
    });
 
-   public prohibitExecution() {
+   private handleNoMails(mails) {
+      this.FallbackService.generateFallback(this.ProcessMailsService.countDown);
+      const countDownNode = this.FallbackService.countDownNode;
+
+      const waitMailsInterval = setInterval(() => {
+         this.ProcessMailsService.decreaseCountDown();
+         countDownNode.textContent = this.ProcessMailsService.countDown + '';
+
+         if (this.ProcessMailsService.confirmIsEmpty(mails)) {
+            clearInterval(waitMailsInterval);
+            this.allowExecution();
+            this.ProcessMailsService.resetCountDown();
+            return;
+         }
+
+         if (this.ProcessMailsService.countDown < 0) {
+            clearInterval(waitMailsInterval);
+            this.AlarmService.sendMessage();
+            this.FallbackService.updateCountDown();
+         }
+      }, 1000);
+
+      this.prohibitExecution();
+   }
+
+   private prohibitExecution() {
       this.executionIsAllowed = false;
    }
 

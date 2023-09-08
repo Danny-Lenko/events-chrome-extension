@@ -1,13 +1,14 @@
 import { MicroEmailFallbackInterface } from '../types/microEmailInterfaces';
 
 export class MicroEmailFallbackService implements MicroEmailFallbackInterface {
+   private overlayNode: Node;
+   private spinnerNode: Node;
+   private messageNode: Node;
+   public countDownNode: Node;
+
    constructor() {}
 
-   public generateFallback(countDownOrigin) {
-      const loadingOverlay = this.buildOverlay();
-      const loadingSpinner = this.buildSpinner();
-      const loadingMessage = this.buildMessage();
-
+   public generateFallback(countDown) {
       const styleSheet = document.styleSheets[0];
       styleSheet.insertRule(
          `
@@ -19,14 +20,23 @@ export class MicroEmailFallbackService implements MicroEmailFallbackInterface {
          styleSheet.cssRules.length,
       );
 
-      const countDownMessage = document.createElement('div');
-      countDownMessage.textContent = countDownOrigin;
+      this.overlayNode = this.buildOverlay();
+      this.spinnerNode = this.buildSpinner();
+      this.messageNode = this.buildMessage();
+      this.countDownNode = document.createElement('div');
+      this.countDownNode.textContent = countDown + '';
 
-      loadingOverlay.appendChild(loadingSpinner);
-      loadingOverlay.appendChild(loadingMessage);
-      loadingOverlay.appendChild(countDownMessage);
+      this.overlayNode.appendChild(this.spinnerNode);
+      this.overlayNode.appendChild(this.messageNode);
+      this.overlayNode.appendChild(this.countDownNode);
 
-      return { loadingOverlay, countDownMessage, loadingMessage };
+      document.body.appendChild(this.overlayNode);
+   }
+
+   public updateCountDown() {
+      this.overlayNode.removeChild(this.countDownNode);
+      this.messageNode.textContent =
+         'Failed filtering mails. Admin has been informed';
    }
 
    private buildOverlay() {
@@ -34,6 +44,7 @@ export class MicroEmailFallbackService implements MicroEmailFallbackInterface {
       overlay.id = 'loading-overlay';
 
       const overlayStyles = {
+         fontSize: '16px',
          position: 'fixed',
          top: '0',
          left: '0',

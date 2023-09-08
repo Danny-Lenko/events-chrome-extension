@@ -1,26 +1,45 @@
-import {
-   MicroEmailProcessMailsInterface,
-   MicroEmailFallbackInterface,
-} from '../types/microEmailInterfaces';
-import { MicroEmailFallbackService } from './microEmailFallbackService';
+import { MicroEmailProcessMailsInterface } from '../types/microEmailInterfaces';
 
 export class MicroEmailProcessMailsService
    implements MicroEmailProcessMailsInterface
 {
-   private readonly countdownOrigin = 3;
+   public countDown = 3;
 
-   constructor(
-      public FallbackService: MicroEmailFallbackInterface = new MicroEmailFallbackService(),
-   ) {}
+   constructor() {}
 
-   public handleNoMails(mails) {
-      const { loadingOverlay, countDownMessage, loadingMessage } =
-         this.FallbackService.generateFallback(this.countdownOrigin);
+   public decreaseCountDown() {
+      this.countDown--;
+   }
 
-      
+   public resetCountDown() {
+      this.countDown = 3;
+   }
 
-      // document.body.appendChild(loadingOverlay);
+   public confirmIsEmpty(mails) {
+      const emptyNode = document.getElementById('EmptyState_MainMessage');
+      const secondaryNode = document.getElementsByClassName('TrKke')[0];
 
-      console.log('handling no mails');
+      const isEmpty =
+         mails[0] ||
+         (emptyNode && emptyNode.innerText !== 'Select an item to read') ||
+         (secondaryNode && secondaryNode.innerHTML !== 'Nothing is selected');
+
+      return isEmpty;
+   }
+
+   public filterMails(mails, filterString) {
+      const filterRegex = new RegExp(filterString, 'ig');
+
+      [...mails].forEach((node) => {
+         const content = node.getAttribute('aria-label');
+
+         if (content && !content.match(filterRegex)) {
+            node.parentElement.parentElement.style.display = 'block';
+         }
+
+         if (content && content.match(filterRegex)) {
+            node.parentElement.parentElement.style.display = 'none';
+         }
+      });
    }
 }

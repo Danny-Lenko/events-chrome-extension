@@ -6,15 +6,21 @@ export interface MicroEmailInterface extends GeneralServiceInterface {
 
 export interface MicroEmailProcessMailsInterface
    extends GeneralServiceInterface {
-   handleNoMails(mails: HTMLCollectionOf<Element>): void;
+   countDown: number;
+   decreaseCountDown(): void;
+   resetCountDown(): void;
+   confirmIsEmpty(mails: HTMLCollectionOf<Element>): Node | boolean;
+   filterMails(mails: HTMLCollectionOf<Element>, filterString: string): void;
 }
 
 export interface MicroEmailFallbackInterface extends GeneralServiceInterface {
-   generateFallback(countDownOrigin: number): {
-      loadingOverlay: Node;
-      countDownMessage: Node;
-      loadingMessage: Node;
-   };
+   countDownNode: Node;
+   generateFallback(countDown: number): void;
+   updateCountDown(): void;
+}
+
+export interface MicroEmailAlarmInterface extends GeneralServiceInterface {
+   sendMessage(): void;
 }
 
 export interface AllInterfaces {
