@@ -6,7 +6,8 @@
     "<all_urls>",
     "activeTab",
     "storage",
-    "tabs"
+    "tabs",
+    "webNavigation"
   ],
   "content_scripts": [
     {

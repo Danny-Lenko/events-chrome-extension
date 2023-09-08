@@ -24,10 +24,17 @@ export class MicroEmailService implements MicroEmailInterface {
       public ProcessMailsService: MicroEmailProcessMailsInterface = new MicroEmailProcessMailsService(),
       public FallbackService: MicroEmailFallbackInterface = new MicroEmailFallbackService(),
       public AlarmService: MicroEmailAlarmInterface = new MicroEmailAlarmService(),
-   ) {}
+   ) {
+      chrome.runtime.onMessage.addListener((message) => {
+         if (message.action === 'userNavigatedBackOrForward') {
+            this.executionIsAllowed = true;
+            console.log(`Execution is allowed: ${this.executionIsAllowed}`);
+         }
+      });
+   }
 
    private observer = new MutationObserver(() => {
-      const mails = document.getElementsByClassName('hcptT');
+      const mails = document.getElementsByClassName('hcpt');
       const loadingOverlay = document.getElementById('loading-overlay');
 
       if (!mails[0] && this.executionIsAllowed) {
@@ -74,8 +81,9 @@ export class MicroEmailService implements MicroEmailInterface {
       this.executionIsAllowed = true;
    }
 
-   run() {
+   async run() {
       console.log('Micro Mail service is working ---------------------!');
+
       return this.observer.observe(
          this.observerTargetNode,
          this.observerConfig,

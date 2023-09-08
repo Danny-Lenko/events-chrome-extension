@@ -1,34 +1,39 @@
 {
-    "name": "--Dev Evening Eats Events",
-    "version": "0.2.0",
-    "description": "Is the Google & Microsoft services optimize",
-    "permissions": ["<all_urls>", "activeTab", "storage", "tabs"],
-    "content_scripts": [
-        {
-            "matches": ["https://*.google.com/calendar/*"],
-            "js": ["runner.js"]
-        },
-        {
-            "matches": ["https://outlook.live.com/calendar/*"],
-            "js": ["runner.js"]
-        },
-        {
-            "matches": ["https://outlook.live.com/mail/*"],
-            "js": ["runner.js"]
-        },
-        {
-            "matches": ["https://meet.google.com/*"],
-            "js": ["runner.js"]
-        }
-    ],
-    "action": {
-        "default_icon": {
-            "16": "assets/ext-icon.png",
-            "24": "assets/ext-icon.png",
-            "32": "assets/ext-icon.png"
-        },
-        "default_title": "--Dev Evening Eats Events"
-    },
-    "manifest_version": 3
+   "name": "--Dev Evening Eats Events",
+   "version": "0.2.0",
+   "description": "Is the Google & Microsoft services optimize",
+   "permissions": [
+      "<all_urls>",
+      "activeTab",
+      "storage",
+      "tabs",
+      "webNavigation"
+   ],
+   "content_scripts": [
+      {
+         "matches": ["https://*.google.com/calendar/*"],
+         "js": ["runner.js"]
+      },
+      {
+         "matches": ["https://outlook.live.com/calendar/*"],
+         "js": ["runner.js"]
+      },
+      {
+         "matches": ["https://outlook.live.com/mail/*"],
+         "js": ["runner.js"]
+      },
+      {
+         "matches": ["https://meet.google.com/*"],
+         "js": ["runner.js"]
+      }
+   ],
+   "action": {
+      "default_icon": {
+         "16": "assets/ext-icon.png",
+         "24": "assets/ext-icon.png",
+         "32": "assets/ext-icon.png"
+      },
+      "default_title": "--Dev Evening Eats Events"
+   },
+   "manifest_version": 3
 }
-
