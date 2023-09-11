@@ -9,6 +9,9 @@ import { MicroEmailProcessMailsService } from './microEmailProcessMailsService';
 import { MicroEmailFallbackService } from './microEmailFallbackService';
 import { MicroEmailAlarmService } from './microEmailAlarmService';
 
+import { RulesIntermediaryService } from '../../intermediaryServices/rulesIntermediaryService/rulesIntermediaryService';
+import { RulesIntermediaryInterface } from '../../intermediaryServices/rulesIntermediaryService/rulesIntermediaryInterface';
+
 @ServiceDecorator
 export class MicroEmailService implements MicroEmailInterface {
    public executionIsAllowed = true;
@@ -21,6 +24,7 @@ export class MicroEmailService implements MicroEmailInterface {
    };
 
    constructor(
+      public RulesService: RulesIntermediaryInterface = new RulesIntermediaryService(),
       public ProcessMailsService: MicroEmailProcessMailsInterface = new MicroEmailProcessMailsService(),
       public FallbackService: MicroEmailFallbackInterface = new MicroEmailFallbackService(),
       public AlarmService: MicroEmailAlarmInterface = new MicroEmailAlarmService(),
@@ -34,7 +38,7 @@ export class MicroEmailService implements MicroEmailInterface {
    }
 
    private observer = new MutationObserver(() => {
-      const mails = document.getElementsByClassName('hcpt');
+      const mails = document.getElementsByClassName('hcptT');
       const loadingOverlay = document.getElementById('loading-overlay');
 
       if (!mails[0] && this.executionIsAllowed) {
@@ -82,6 +86,9 @@ export class MicroEmailService implements MicroEmailInterface {
    }
 
    async run() {
+      const rules = await this.RulesService.getRules();
+      console.log(rules);
+
       console.log('Micro Mail service is working ---------------------!');
 
       return this.observer.observe(
