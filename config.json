@@ -1,6 +1,7 @@
 {
-  "adminEmail": "helloAdmin@example.com",
-  "emailServices": {
-    "filterString": "back football"
-  }
+   "adminEmail": "devdanny.14@gmail.com",
+   "extensionEmail": "devdanny.14@gmail.com",
+   "emailServices": {
+      "filterString": "hello"
+   }
 }

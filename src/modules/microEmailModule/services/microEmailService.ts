@@ -15,7 +15,7 @@ import { RulesIntermediaryInterface } from '../../intermediaryServices/rulesInte
 @ServiceDecorator
 export class MicroEmailService implements MicroEmailInterface {
    public executionIsAllowed = true;
-   private filterString = 'hello';
+   private filterString = '';
 
    private readonly observerTargetNode: HTMLElement = document.body;
    private readonly observerConfig: Record<string, boolean> = {
@@ -37,7 +37,7 @@ export class MicroEmailService implements MicroEmailInterface {
       });
    }
 
-   private observer = new MutationObserver(() => {
+   private observer = new MutationObserver(async () => {
       const mails = document.getElementsByClassName('hcptT');
       const loadingOverlay = document.getElementById('loading-overlay');
 
@@ -50,6 +50,9 @@ export class MicroEmailService implements MicroEmailInterface {
       }
 
       this.ProcessMailsService.filterMails(mails, this.filterString);
+
+      // const rules = await this.RulesService.getRules();
+      // this.filterString = rules.emailServices.filterString;
    });
 
    private handleNoMails(mails) {
@@ -87,7 +90,7 @@ export class MicroEmailService implements MicroEmailInterface {
 
    async run() {
       const rules = await this.RulesService.getRules();
-      console.log(rules);
+      this.filterString = rules.emailServices.filterString;
 
       console.log('Micro Mail service is working ---------------------!');
 
