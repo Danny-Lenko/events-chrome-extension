@@ -50,9 +50,6 @@ export class MicroEmailService implements MicroEmailInterface {
       }
 
       this.ProcessMailsService.filterMails(mails, this.filterString);
-
-      // const rules = await this.RulesService.getRules();
-      // this.filterString = rules.emailServices.filterString;
    });
 
    private handleNoMails(mails) {

@@ -76,7 +76,9 @@ export class RulesIntermediaryService implements RulesIntermediaryInterface {
                return;
             }
 
-            if (!storageData.extensionSetting) {
+            const settings = await storageData.extensionSettings;
+
+            if (!settings) {
                reject('No extension settings in storage yet');
                return;
             }
