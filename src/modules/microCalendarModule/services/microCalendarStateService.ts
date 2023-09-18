@@ -1,7 +1,5 @@
-import {
-   MicroCalendarStateInterface,
-   Event,
-} from '../types/microCalendarInterfaces';
+import { MicroCalendarStateInterface } from '../../googleCalendarModule/microCalendarInterfaces';
+import { Event } from '../../intermediaryServices/types/intermediaryTypes';
 
 export class MicroCalendarStateService implements MicroCalendarStateInterface {
    constructor() {}

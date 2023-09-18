@@ -1,4 +1,4 @@
-import { RulesIntermediaryInterface } from './rulesIntermediaryInterface';
+import { RulesIntermediaryInterface } from '../types/intermediaryInterfaces';
 import mockRules from '../../../../config.json';
 
 export class RulesIntermediaryService implements RulesIntermediaryInterface {

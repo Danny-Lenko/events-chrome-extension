@@ -1,14 +1,14 @@
 import {
-   MicroCalendarApiInterface,
    MicroCalendarFormattingInterface,
    MicroCalendarInterface,
-   Event,
    MicroCalendarStateInterface,
 } from '../types/microCalendarInterfaces';
+import { Event } from '../../intermediaryServices/types/intermediaryTypes';
 import { ServiceDecorator } from '../../../core/decorators/ServiceDecorator';
 import { MicroCalendarFormattingService } from './microCalendarFormattingService';
-import { MicroCalendarApiService } from './microCalendarApiService';
 import { MicroCalendarStateService } from './microCalendarStateService';
+import { CalendarIntermediaryInterface } from '../../intermediaryServices/types/intermediaryInterfaces';
+import { CalendarIntermediaryService } from '../../intermediaryServices/services/calendarsIntermediaryService';
 
 @ServiceDecorator
 export class MicroCalendarService implements MicroCalendarInterface {
@@ -22,7 +22,7 @@ export class MicroCalendarService implements MicroCalendarInterface {
 
    constructor(
       public FormattingService: MicroCalendarFormattingInterface = new MicroCalendarFormattingService(),
-      public ApiService: MicroCalendarApiInterface = new MicroCalendarApiService(),
+      public IntermediaryService: CalendarIntermediaryInterface = new CalendarIntermediaryService(),
       public StateService: MicroCalendarStateInterface = new MicroCalendarStateService(),
    ) {}
 
@@ -39,7 +39,7 @@ export class MicroCalendarService implements MicroCalendarInterface {
          console.log(extraEvents);
       }
 
-      // await this.ApiService.postEvents(currentStateEvents);
+      await this.IntermediaryService.postEvents(currentStateEvents);
       this.StateService.updateStorageState(currentStateEvents);
 
       // this.clearStorate();

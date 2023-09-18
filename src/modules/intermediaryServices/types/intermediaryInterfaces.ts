@@ -1,4 +1,5 @@
 import { GeneralServiceInterface } from '../../../core/coreInterfaces';
+import { Event } from './intermediaryTypes';
 
 export interface RulesIntermediaryInterface extends GeneralServiceInterface {
    getRules(): Promise<{
@@ -7,4 +8,8 @@ export interface RulesIntermediaryInterface extends GeneralServiceInterface {
          filterString: string;
       };
    }>;
+}
+
+export interface CalendarIntermediaryInterface extends GeneralServiceInterface {
+   postEvents(events: Event[]): Promise<void>;
 }

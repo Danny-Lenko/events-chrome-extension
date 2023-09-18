@@ -1,4 +1,5 @@
 import { GeneralServiceInterface } from '../../../core/coreInterfaces';
+import { Event } from '../../intermediaryServices/types/intermediaryTypes';
 
 export interface MicroCalendarInterface extends GeneralServiceInterface {
    run(): void;
@@ -7,10 +8,6 @@ export interface MicroCalendarInterface extends GeneralServiceInterface {
 export interface MicroCalendarFormattingInterface
    extends GeneralServiceInterface {
    editLikeGoogleApiWants(nodeContent: string): Event;
-}
-
-export interface MicroCalendarApiInterface extends GeneralServiceInterface {
-   postEvents(events: Event[]): Promise<void>;
 }
 
 export interface MicroCalendarStateInterface extends GeneralServiceInterface {
@@ -24,13 +21,4 @@ export interface AllInterfaces {
    interfaces: {
       MicroCalendarInterface: MicroCalendarInterface;
    };
-}
-
-export interface Event {
-   colorId: string;
-   description: string;
-   end: string;
-   organizer: string;
-   start: string;
-   status: string;
 }

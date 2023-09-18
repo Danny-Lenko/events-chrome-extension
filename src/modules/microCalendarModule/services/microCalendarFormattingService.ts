@@ -1,4 +1,4 @@
-import { MicroCalendarFormattingInterface } from '../types/microCalendarInterfaces';
+import { MicroCalendarFormattingInterface } from '../../googleCalendarModule/microCalendarInterfaces';
 
 export class MicroCalendarFormattingService
    implements MicroCalendarFormattingInterface

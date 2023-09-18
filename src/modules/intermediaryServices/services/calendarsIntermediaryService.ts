@@ -1,9 +1,9 @@
-import {
-   MicroCalendarApiInterface,
-   Event,
-} from '../types/microCalendarInterfaces';
+import { Event } from '../types/intermediaryTypes';
+import { CalendarIntermediaryInterface } from '../types/intermediaryInterfaces';
 
-export class MicroCalendarApiService implements MicroCalendarApiInterface {
+export class CalendarIntermediaryService
+   implements CalendarIntermediaryInterface
+{
    constructor() {}
 
    public async postEvents(events: Event[]): Promise<void> {

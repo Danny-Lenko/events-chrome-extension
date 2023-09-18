@@ -9,7 +9,7 @@ import { MicroEmailProcessMailsService } from './microEmailProcessMailsService';
 import { MicroEmailFallbackService } from './microEmailFallbackService';
 import { MicroEmailAlarmService } from './microEmailAlarmService';
 
-import { RulesIntermediaryService } from '../../intermediaryServices/rulesIntermediaryService/rulesIntermediaryService';
+import { RulesIntermediaryService } from '../../intermediaryServices/services/rulesIntermediaryService';
 import { RulesIntermediaryInterface } from '../../intermediaryServices/rulesIntermediaryService/rulesIntermediaryInterface';
 
 @ServiceDecorator
