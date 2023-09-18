@@ -56,11 +56,11 @@ export const addEvents = (db) => async (req, res) => {
       });
 
       // comment out if you ain't testing the admin account
-      // for (const event of googleApiFormattedEvents) {
-      //   authorize()
-      //     .then((auth) => insertGoogleEvent(auth, event))
-      //     .catch(console.error);
-      // }
+      for (const event of googleApiFormattedEvents) {
+         authorize()
+            .then((auth) => insertGoogleEvent(auth, event))
+            .catch(console.error);
+      }
 
       return res.status(201).json({
          message: 'Events added or updated successfully',

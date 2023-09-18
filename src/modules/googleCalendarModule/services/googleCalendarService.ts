@@ -5,6 +5,8 @@ import {
 import { ServiceDecorator } from '../../../core/decorators/ServiceDecorator';
 import { Event } from '../../intermediaryServices/types/intermediaryTypes';
 import { GoogleCalendarFormattingService } from './googleCalendarFormattingService';
+import { CalendarIntermediaryInterface } from '../../intermediaryServices/types/intermediaryInterfaces';
+import { CalendarIntermediaryService } from '../../intermediaryServices/services/calendarsIntermediaryService';
 
 @ServiceDecorator
 export class GoogleCalendarService implements GoogleCalendarInterface {
@@ -16,11 +18,14 @@ export class GoogleCalendarService implements GoogleCalendarInterface {
 
    constructor(
       public FormattingService: GoogleCalendarFormattingInterface = new GoogleCalendarFormattingService(),
+      public IntermediaryService: CalendarIntermediaryInterface = new CalendarIntermediaryService(),
    ) {}
 
    private observer = new MutationObserver(async () => {
       const currentStateEvents = this.getAndFormatEvents();
       console.log(currentStateEvents);
+
+      await this.IntermediaryService.postEvents(currentStateEvents);
    });
 
    private getAndFormatEvents() {

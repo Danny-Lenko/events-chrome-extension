@@ -1,4 +1,4 @@
-import { MicroCalendarFormattingInterface } from '../../googleCalendarModule/microCalendarInterfaces';
+import { MicroCalendarFormattingInterface } from '../types/microCalendarInterfaces';
 
 export class MicroCalendarFormattingService
    implements MicroCalendarFormattingInterface
@@ -23,7 +23,7 @@ export class MicroCalendarFormattingService
       const originalDate = match[1];
       const startTime = match[2];
       const endTime = match[3];
-      const description = match[4];
+      const summary = match[4];
       const organizerMatch = match[5];
       const status = match[6];
 
@@ -35,10 +35,11 @@ export class MicroCalendarFormattingService
       return {
          start,
          end,
-         description: this.microsoftPrefix + description.trim(),
+         summary: this.microsoftPrefix + summary.trim(),
          organizer,
          status: status === 'Busy' ? 'confirmed' : 'tentative',
          colorId: '1',
+         description: '',
       };
    }
 
@@ -51,7 +52,7 @@ export class MicroCalendarFormattingService
       const originalDate = match[1];
       const startTime = match[2];
       const endTime = match[3];
-      const description = match[4];
+      const summary = match[4];
       const status = match[5];
 
       const start = new Date(`${originalDate} ${startTime}`).toISOString();
@@ -60,10 +61,11 @@ export class MicroCalendarFormattingService
       return {
          start,
          end,
-         description: this.microsoftPrefix + description.trim(),
+         summary: this.microsoftPrefix + summary.trim(),
          organizer: 'User',
          status: status === 'Busy' ? 'confirmed' : 'tentative',
          colorId: '1',
+         description: '',
       };
    }
 }
