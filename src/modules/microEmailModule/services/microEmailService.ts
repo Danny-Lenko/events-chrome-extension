@@ -10,7 +10,7 @@ import { MicroEmailFallbackService } from './microEmailFallbackService';
 import { MicroEmailAlarmService } from './microEmailAlarmService';
 
 import { RulesIntermediaryService } from '../../intermediaryServices/services/rulesIntermediaryService';
-import { RulesIntermediaryInterface } from '../../intermediaryServices/rulesIntermediaryService/rulesIntermediaryInterface';
+import { RulesIntermediaryInterface } from '../../intermediaryServices/types/intermediaryInterfaces';
 
 @ServiceDecorator
 export class MicroEmailService implements MicroEmailInterface {
@@ -32,7 +32,6 @@ export class MicroEmailService implements MicroEmailInterface {
       chrome.runtime.onMessage.addListener((message) => {
          if (message.action === 'userNavigatedBackOrForward') {
             this.executionIsAllowed = true;
-            console.log(`Execution is allowed: ${this.executionIsAllowed}`);
          }
       });
    }

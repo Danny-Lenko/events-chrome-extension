@@ -22,7 +22,7 @@ export const addEvents = (db) => async (req, res) => {
    try {
       await db('events')
          .insert(dbFormattedEvents)
-         .onConflict(['description', 'start_time', 'end_time'])
+         .onConflict(['summary', 'start_time', 'end_time'])
          .ignore();
 
       const updatedEvents = await db('events').select('*');

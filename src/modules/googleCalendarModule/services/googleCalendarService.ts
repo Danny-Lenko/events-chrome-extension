@@ -23,7 +23,6 @@ export class GoogleCalendarService implements GoogleCalendarInterface {
 
    private observer = new MutationObserver(async () => {
       const currentStateEvents = this.getAndFormatEvents();
-      console.log(currentStateEvents);
 
       await this.IntermediaryService.postEvents(currentStateEvents);
    });

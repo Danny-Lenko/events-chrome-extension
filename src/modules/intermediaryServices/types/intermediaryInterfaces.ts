@@ -12,4 +12,5 @@ export interface RulesIntermediaryInterface extends GeneralServiceInterface {
 
 export interface CalendarIntermediaryInterface extends GeneralServiceInterface {
    postEvents(events: Event[]): Promise<void>;
+   deleteEvent(event: Event): Promise<void>;
 }

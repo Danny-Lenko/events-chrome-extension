@@ -6,17 +6,22 @@ export const deleteEvent = (db) => async (req, res) => {
    const start_time = start;
    const end_time = end;
 
+   let eventToDelete;
+   let eventId;
+
    try {
-      const eventToDelete = await db('events')
+      eventToDelete = await db('events')
          .where({ summary, start_time, end_time })
          .first();
+      eventId = eventToDelete.id.replace(/-/g, '');
+   } catch (error) {}
 
-      const eventId = eventToDelete.id.replace(/-/g, '');
+   try {
 
       // comment out if you ain't testing the admin account
-      // authorize()
-      //   .then((auth) => deleteGoogleEvent(auth, eventId))
-      //   .catch(console.error);
+      authorize()
+         .then((auth) => deleteGoogleEvent(auth, eventId))
+         .catch(console.error);
 
       await db('events').where({ summary, start_time, end_time }).del();
       const updatedEvents = await db('events').select('*');

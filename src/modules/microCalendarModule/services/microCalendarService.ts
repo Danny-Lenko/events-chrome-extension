@@ -30,6 +30,8 @@ export class MicroCalendarService implements MicroCalendarInterface {
       const currentStateEvents = this.getAndFormatEvents();
       const previousStateEvents = await this.StateService.getStorageState();
 
+      console.log('Storage event: ', previousStateEvents);
+
       const extraEvents = this.StateService.findExtraObjects(
          previousStateEvents,
          currentStateEvents,
@@ -37,12 +39,14 @@ export class MicroCalendarService implements MicroCalendarInterface {
 
       if (extraEvents.length) {
          console.log(extraEvents);
+
+         for (const event of extraEvents) {
+            await this.IntermediaryService.deleteEvent(event);
+         }
       }
 
       await this.IntermediaryService.postEvents(currentStateEvents);
       this.StateService.updateStorageState(currentStateEvents);
-
-      // this.clearStorate();
    });
 
    private getAndFormatEvents() {

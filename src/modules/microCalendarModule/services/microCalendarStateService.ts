@@ -1,4 +1,4 @@
-import { MicroCalendarStateInterface } from '../../googleCalendarModule/microCalendarInterfaces';
+import { MicroCalendarStateInterface } from '../types/microCalendarInterfaces';
 import { Event } from '../../intermediaryServices/types/intermediaryTypes';
 
 export class MicroCalendarStateService implements MicroCalendarStateInterface {
@@ -20,6 +20,7 @@ export class MicroCalendarStateService implements MicroCalendarStateInterface {
          }
       }
 
+      console.log('Not in current state:', notInCurrentState);
       return notInCurrentState;
    }
 
@@ -27,18 +28,16 @@ export class MicroCalendarStateService implements MicroCalendarStateInterface {
       return (
          obj1.end === obj2.end &&
          obj1.start === obj2.start &&
-         obj1.description === obj2.description
+         obj1.summary === obj2.summary
       );
    }
 
    public updateStorageState(events: Event[]) {
-      chrome.storage.local.set({ microEvents: events }, () => {
-         console.log('Storage events got updated');
-      });
+      chrome.storage.local.set({ microEvents: events }, () => {});
    }
 
    public getStorageState() {
-      console.log('storage reached');
+      // this.clearStorate();
 
       return new Promise<Event[]>((resolve, reject) => {
          chrome.storage.local.get('microEvents', async (storageData) => {
@@ -60,7 +59,8 @@ export class MicroCalendarStateService implements MicroCalendarStateInterface {
       });
    }
 
-   public clearStorate() {
-      chrome.storage.local.remove('microEvents');
+   public async clearStorate() {
+      await chrome.storage.local.remove('microEvents');
+      console.log('storage has been cleared');
    }
 }
