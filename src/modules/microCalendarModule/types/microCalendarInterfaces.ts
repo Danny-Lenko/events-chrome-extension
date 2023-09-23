@@ -12,8 +12,8 @@ export interface MicroCalendarFormattingInterface
 
 export interface MicroCalendarStateInterface extends GeneralServiceInterface {
    findExtraObjects(previousState: Event[], currentState: Event[]): Event[];
-   getStorageState(): Promise<Event[]>;
-   updateStorageState(events: Event[]): void;
+   getStorageState(storageIndex: string): Promise<Event[]>;
+   updateStorageState(storageIndex: string, events: Event[]): void;
 }
 
 export interface AllInterfaces {

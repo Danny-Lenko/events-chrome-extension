@@ -48,4 +48,64 @@ export class CalendarIntermediaryService
          console.error('Error fetching data:', error);
       }
    }
+
+   public findExtraObjects(
+      previousState: Event[],
+      currentState: Event[],
+   ): Event[] {
+      const notInCurrentState = [];
+
+      for (const prevObject of previousState) {
+         const existsInCurrentState = currentState.some((currObject) => {
+            return this.compareObjects(prevObject, currObject);
+         });
+
+         if (!existsInCurrentState) {
+            notInCurrentState.push(prevObject);
+         }
+      }
+
+      return notInCurrentState;
+   }
+
+   private compareObjects(obj1: Event, obj2: Event): boolean {
+      return (
+         obj1.end === obj2.end &&
+         obj1.start === obj2.start &&
+         obj1.summary === obj2.summary
+      );
+   }
+
+   public async updateStorageState(storageIndex: string, events: Event[]) {
+      await chrome.storage.local.set({ [storageIndex]: events }, () => {});
+      await chrome.storage.local.get(async (storageData) => {
+         const events = await storageData;
+         console.log(events);
+      });
+   }
+
+   public async getStorageState(storageIndex: string) {
+      return new Promise<Event[]>((resolve, reject) => {
+         chrome.storage.local.get(storageIndex, async (storageData) => {
+            if (chrome.runtime.lastError) {
+               reject(chrome.runtime.lastError);
+               return;
+            }
+
+            const events = await storageData[storageIndex];
+
+            if (!events) {
+               this.updateStorageState(storageIndex, []);
+               // reject('No events yet');
+               return;
+            }
+
+            resolve(events);
+         });
+      });
+   }
+
+   public async clearStorage(storageIndex: string) {
+      await chrome.storage.local.remove(storageIndex);
+   }
 }

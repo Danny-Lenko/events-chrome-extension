@@ -1,5 +1,10 @@
 import { authorize } from '../googleApiClient/googleApiClient.js';
-import { deleteGoogleEvent } from './googleApi.js';
+import {
+   clearAggregatorEvents,
+   insertNewGoogleEvent,
+   listEventsToConsole,
+} from './googleApi.js';
+import { formatDbEvents } from './addEvents.js';
 
 export const deleteEvent = (db) => async (req, res) => {
    const { summary, start, end } = req.body;
@@ -14,19 +19,25 @@ export const deleteEvent = (db) => async (req, res) => {
          .where({ summary, start_time, end_time })
          .first();
       eventId = eventToDelete.id.replace(/-/g, '');
-   } catch (error) {}
 
-   try {
-
-      // comment out if you ain't testing the admin account
-      authorize()
-         .then((auth) => deleteGoogleEvent(auth, eventId))
-         .catch(console.error);
+      const auth = await authorize();
+      clearAggregatorEvents(auth);
 
       await db('events').where({ summary, start_time, end_time }).del();
       const updatedEvents = await db('events').select('*');
 
-      res.status(200).json({
+      const googleApiFormattedEvents = formatDbEvents(updatedEvents);
+
+
+      for (const event of googleApiFormattedEvents) {
+         authorize()
+            .then((auth) => insertNewGoogleEvent(auth, event))
+            .catch(console.error);
+      }
+
+      await listEventsToConsole(auth);
+
+      return res.status(200).json({
          message: 'Event deleted successfully',
          events: updatedEvents,
          deletedEvent: eventToDelete,

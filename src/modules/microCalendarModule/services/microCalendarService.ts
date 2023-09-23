@@ -1,18 +1,17 @@
 import {
    MicroCalendarFormattingInterface,
    MicroCalendarInterface,
-   MicroCalendarStateInterface,
 } from '../types/microCalendarInterfaces';
 import { Event } from '../../intermediaryServices/types/intermediaryTypes';
 import { ServiceDecorator } from '../../../core/decorators/ServiceDecorator';
 import { MicroCalendarFormattingService } from './microCalendarFormattingService';
-import { MicroCalendarStateService } from './microCalendarStateService';
 import { CalendarIntermediaryInterface } from '../../intermediaryServices/types/intermediaryInterfaces';
 import { CalendarIntermediaryService } from '../../intermediaryServices/services/calendarsIntermediaryService';
 
 @ServiceDecorator
 export class MicroCalendarService implements MicroCalendarInterface {
    private events: Event[];
+   private storageIndex: string = 'microEvents';
 
    private readonly observerTargetNode: HTMLElement = document.body;
    private readonly observerConfig: Record<string, boolean> = {
@@ -23,30 +22,29 @@ export class MicroCalendarService implements MicroCalendarInterface {
    constructor(
       public FormattingService: MicroCalendarFormattingInterface = new MicroCalendarFormattingService(),
       public IntermediaryService: CalendarIntermediaryInterface = new CalendarIntermediaryService(),
-      public StateService: MicroCalendarStateInterface = new MicroCalendarStateService(),
    ) {}
 
    private observer = new MutationObserver(async () => {
       const currentStateEvents = this.getAndFormatEvents();
-      const previousStateEvents = await this.StateService.getStorageState();
+      const previousStateEvents =
+         await this.IntermediaryService.getStorageState(this.storageIndex);
 
-      console.log('Storage event: ', previousStateEvents);
-
-      const extraEvents = this.StateService.findExtraObjects(
+      const extraEvents = this.IntermediaryService.findExtraObjects(
          previousStateEvents,
          currentStateEvents,
       );
 
       if (extraEvents.length) {
-         console.log(extraEvents);
-
          for (const event of extraEvents) {
             await this.IntermediaryService.deleteEvent(event);
          }
       }
 
       await this.IntermediaryService.postEvents(currentStateEvents);
-      this.StateService.updateStorageState(currentStateEvents);
+      this.IntermediaryService.updateStorageState(
+         this.storageIndex,
+         currentStateEvents,
+      );
    });
 
    private getAndFormatEvents() {

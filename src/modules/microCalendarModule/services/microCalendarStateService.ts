@@ -20,7 +20,6 @@ export class MicroCalendarStateService implements MicroCalendarStateInterface {
          }
       }
 
-      console.log('Not in current state:', notInCurrentState);
       return notInCurrentState;
    }
 
@@ -32,24 +31,22 @@ export class MicroCalendarStateService implements MicroCalendarStateInterface {
       );
    }
 
-   public updateStorageState(events: Event[]) {
-      chrome.storage.local.set({ microEvents: events }, () => {});
+   public updateStorageState(storageIndex: string, events: Event[]) {
+      chrome.storage.local.set({ [storageIndex]: events }, () => {});
    }
 
-   public getStorageState() {
-      // this.clearStorate();
-
+   public getStorageState(storageIndex: string) {
       return new Promise<Event[]>((resolve, reject) => {
-         chrome.storage.local.get('microEvents', async (storageData) => {
+         chrome.storage.local.get(storageIndex, async (storageData) => {
             if (chrome.runtime.lastError) {
                reject(chrome.runtime.lastError);
                return;
             }
 
-            const events = await storageData.microEvents;
+            const events = await storageData[storageIndex];
 
             if (!events) {
-               this.updateStorageState([]);
+               this.updateStorageState(storageIndex, []);
                reject('No micro event yet');
                return;
             }
@@ -61,6 +58,5 @@ export class MicroCalendarStateService implements MicroCalendarStateInterface {
 
    public async clearStorate() {
       await chrome.storage.local.remove('microEvents');
-      console.log('storage has been cleared');
    }
 }

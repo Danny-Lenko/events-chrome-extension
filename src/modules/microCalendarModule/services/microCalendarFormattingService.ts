@@ -10,8 +10,6 @@ export class MicroCalendarFormattingService
    public editLikeGoogleApiWants(nodeContent: string) {
       if (!nodeContent) return;
 
-      console.log(nodeContent);
-
       const regex =
          /from\s(.+?)\s(\d{2}:\d{2})\sto\s(\d{2}:\d{2})\s(.+?)\sorganizer\s(.+?)\sevent\sshown\sas\s(.+)/;
 

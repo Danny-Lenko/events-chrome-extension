@@ -10,6 +10,8 @@ import { CalendarIntermediaryService } from '../../intermediaryServices/services
 
 @ServiceDecorator
 export class GoogleCalendarService implements GoogleCalendarInterface {
+   private storageIndex: string = 'googleEvents';
+
    private readonly observerTargetNode: HTMLElement = document.body;
    private readonly observerConfig: Record<string, boolean> = {
       childList: true,
@@ -23,7 +25,25 @@ export class GoogleCalendarService implements GoogleCalendarInterface {
 
    private observer = new MutationObserver(async () => {
       const currentStateEvents = this.getAndFormatEvents();
+      const previousStateEvents =
+         await this.IntermediaryService.getStorageState(this.storageIndex);
 
+      const extraEvents = this.IntermediaryService.findExtraObjects(
+         previousStateEvents,
+         currentStateEvents,
+      );
+
+      if (extraEvents.length) {
+         for (const event of extraEvents) {
+            await this.IntermediaryService.deleteEvent(event);
+         }
+      }
+
+      await this.IntermediaryService.updateStorageState(
+         this.storageIndex,
+         currentStateEvents,
+      );
+      console.log(currentStateEvents);
       await this.IntermediaryService.postEvents(currentStateEvents);
    });
 

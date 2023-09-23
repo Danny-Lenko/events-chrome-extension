@@ -1,5 +1,66 @@
 import { google } from 'googleapis';
 
+export async function insertNewGoogleEvent(auth, event) {
+   const calendar = google.calendar({ version: 'v3', auth });
+
+   const existingEvent = await findExistingEvent(calendar, event);
+
+   if (!existingEvent) {
+      calendar.events.insert(
+         {
+            auth: auth,
+            calendarId: 'primary',
+            resource: event,
+         },
+         function (err, event) {
+            if (err) {
+               console.log(
+                  'There was an error contacting the Calendar service: ' + err,
+               );
+               return;
+            }
+            console.log('Event created: %s', event);
+         },
+      );
+   } else {
+      console.log('Event already exists: %s', existingEvent);
+   }
+}
+
+async function findExistingEvent(calendar, newEvent) {
+   const res = await calendar.events.list({
+      calendarId: 'primary',
+   });
+
+   const events = res.data.items;
+
+   for (const event of events) {
+      if (
+         event.start.dateTime === newEvent.start.dateTime &&
+         event.end.dateTime === newEvent.end.dateTime &&
+         event.summary === newEvent.summary
+      ) {
+         return event;
+      }
+   }
+
+   return null;
+}
+
+export function clearAggregatorEvents(auth) {
+   const calendar = google.calendar({ version: 'v3', auth });
+
+   calendar.calendars.clear(
+      {
+         calendarId: 'primary',
+      },
+      (err, res) => {
+         console.log(res);
+         if (err) return err;
+      },
+   );
+}
+
 export async function listEvents(auth) {
    const calendar = google.calendar({ version: 'v3', auth });
    const res = await calendar.events.list({
@@ -21,27 +82,7 @@ export async function listEvents(auth) {
    });
 }
 
-export function insertGoogleEvent(auth, event) {
-   const calendar = google.calendar({ version: 'v3', auth });
-   calendar.events.insert(
-      {
-         auth: auth,
-         calendarId: 'primary',
-         resource: event,
-      },
-      function (err, event) {
-         if (err) {
-            console.log(
-               'There was an error contacting the Calendar service: ' + err,
-            );
-            return;
-         }
-         console.log('Event created: %s', event.htmlLink);
-      },
-   );
-}
-
-export function deleteGoogleEvent(auth, eventId) {
+export async function deleteGoogleEvent(auth, eventId) {
    const calendar = google.calendar({ version: 'v3', auth });
 
    calendar.events.delete(
