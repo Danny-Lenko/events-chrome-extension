@@ -31,6 +31,41 @@ const port = 8080;
 app.use(bodyParser.json());
 app.use(cors());
 
+function triggerSynchronization() {
+   // Implement your synchronization logic here
+   // This could involve clearing and syncing events with Google Calendar
+}
+
+//  async function notify(){
+const connection = await db.client.acquireConnection();
+connection.query('LISTEN event_changes');
+connection.on('notification', (msg) => {
+   console.log('got ' + msg.channel + ' payload ' + msg.payload);
+
+   
+});
+
+// });
+
+// await db.client.releaseConnection(connection);
+
+// }
+
+//  // Use `knex` to execute queries
+//  db.raw('LISTEN event_changes').then(() => {
+//    console.log('Listening for database changes...');
+
+//    // Listen for notifications
+//    db.on('notification', (msg) => {
+//      console.log('Received notification:', msg);
+
+//      // Handle the notification and trigger synchronization
+//    //   triggerSynchronization();
+//    });
+//  }).catch((error) => {
+//    console.error('Error:', error);
+//  });
+
 app.get('/', (req, res) => {
    res.send('Hello Uriy!');
 });

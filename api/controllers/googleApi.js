@@ -19,7 +19,7 @@ export async function insertNewGoogleEvent(auth, event) {
                );
                return;
             }
-            console.log('Event created: %s', event);
+            // console.log('Event created: %s', event);
          },
       );
    } else {
@@ -55,7 +55,7 @@ export function clearAggregatorEvents(auth) {
          calendarId: 'primary',
       },
       (err, res) => {
-         console.log(res);
+         // console.log(res);
          if (err) return err;
       },
    );

@@ -2,7 +2,7 @@ import { authorize } from '../googleApiClient/googleApiClient.js';
 import {
    clearAggregatorEvents,
    insertNewGoogleEvent,
-   listEventsToConsole,
+   // listEventsToConsole,
 } from './googleApi.js';
 import { formatDbEvents } from './addEvents.js';
 
@@ -35,7 +35,7 @@ export const deleteEvent = (db) => async (req, res) => {
             .catch(console.error);
       }
 
-      await listEventsToConsole(auth);
+      // await listEventsToConsole(auth);
 
       return res.status(200).json({
          message: 'Event deleted successfully',
