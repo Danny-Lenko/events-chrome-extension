@@ -1,4 +1,5 @@
 import { google } from 'googleapis';
+import { authorize } from '../googleApiClient/googleApiClient.js';
 
 export async function insertNewGoogleEvent(auth, event) {
    const calendar = google.calendar({ version: 'v3', auth });
@@ -19,7 +20,6 @@ export async function insertNewGoogleEvent(auth, event) {
                );
                return;
             }
-            // console.log('Event created: %s', event);
          },
       );
    } else {
@@ -47,15 +47,57 @@ async function findExistingEvent(calendar, newEvent) {
    return null;
 }
 
+export async function syncDbAndAggregatorAcc(db) {
+   const auth = await authorize();
+   clearAggregatorEvents(auth);
+
+   const updatedEvents = await db('events').select('*');
+   const googleApiFormattedEvents = formatDbEvents(updatedEvents);
+
+   for (const event of googleApiFormattedEvents) {
+      authorize()
+         .then((auth) => insertNewGoogleEvent(auth, event))
+         .catch(console.error);
+   }
+}
+
+export function formatDbEvents(events) {
+   return events.map((event) => {
+      const {
+         id,
+         summary,
+         start_time,
+         end_time,
+         color_id,
+         organizer,
+         description,
+      } = event;
+
+      return {
+         summary,
+         start: {
+            dateTime: start_time,
+            timeZome: 'Europe/Kyiv',
+         },
+         end: {
+            dateTime: end_time,
+            timeZome: 'Europe/Kyiv',
+         },
+         colorId: color_id,
+         organizer,
+         description,
+      };
+   });
+}
+
 export function clearAggregatorEvents(auth) {
    const calendar = google.calendar({ version: 'v3', auth });
 
-   calendar.calendars.clear(
+   return calendar.calendars.clear(
       {
          calendarId: 'primary',
       },
-      (err, res) => {
-         // console.log(res);
+      async (err, res) => {
          if (err) return err;
       },
    );

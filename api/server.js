@@ -6,7 +6,11 @@ import dotenv from 'dotenv';
 import fs from 'fs';
 
 import { authorize } from './googleApiClient/googleApiClient.js';
-import { listEvents, createDraftEmail } from './controllers/googleApi.js';
+import {
+   listEvents,
+   createDraftEmail,
+   syncDbAndAggregatorAcc,
+} from './controllers/googleApi.js';
 import { addEvents } from './controllers/addEvents.js';
 import { deleteEvent } from './controllers/deleteEvent.js';
 
@@ -31,40 +35,37 @@ const port = 8080;
 app.use(bodyParser.json());
 app.use(cors());
 
-function triggerSynchronization() {
-   // Implement your synchronization logic here
-   // This could involve clearing and syncing events with Google Calendar
-}
+let lastSyncTime = null;
+let syncPending = false;
+const syncInterval = 10000;
 
-//  async function notify(){
+// LISTEN/NOTIFY implementation
 const connection = await db.client.acquireConnection();
 connection.query('LISTEN event_changes');
-connection.on('notification', (msg) => {
-   console.log('got ' + msg.channel + ' payload ' + msg.payload);
-
-   
+connection.on('notification', async (msg) => {
+   synchronize();
 });
 
-// });
+// Throttling to prevent duplication
+async function synchronize() {
+   const now = Date.now();
 
-// await db.client.releaseConnection(connection);
+   if (!lastSyncTime || now - lastSyncTime >= syncInterval) {
+      lastSyncTime = now;
+      syncPending = false;
 
-// }
+      await syncDbAndAggregatorAcc(db);
+   } else {
+      syncPending = true;
+      console.log('Synchronization pending due to throttling.');
+   }
+}
 
-//  // Use `knex` to execute queries
-//  db.raw('LISTEN event_changes').then(() => {
-//    console.log('Listening for database changes...');
-
-//    // Listen for notifications
-//    db.on('notification', (msg) => {
-//      console.log('Received notification:', msg);
-
-//      // Handle the notification and trigger synchronization
-//    //   triggerSynchronization();
-//    });
-//  }).catch((error) => {
-//    console.error('Error:', error);
-//  });
+setInterval(async () => {
+   if (syncPending) {
+      await synchronize();
+   }
+}, syncInterval);
 
 app.get('/', (req, res) => {
    res.send('Hello Uriy!');
