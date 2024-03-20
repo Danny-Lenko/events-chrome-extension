@@ -11,9 +11,11 @@ export class MicroCalendarFormattingService
       if (!nodeContent) return;
 
       const regex =
-         /from\s(.+?)\s(\d{2}:\d{2})\sto\s(\d{2}:\d{2})\s(.+?)\sorganizer\s(.+?)\sevent\sshown\sas\s(.+)/;
+         /event\sfrom\s(.+?)\s(\d{1,2}:\d{2})\sto\s(\d{1,2}:\d{2})\s(.+?)\sorganizer\s(.+?)\sevent\sshown\sas\s(.+)/;
 
-      const match = nodeContent.match(regex);
+      const string = nodeContent.replace(/\s{2,}/g, ' ');
+
+      const match = string.match(regex);
 
       if (match) return this.formatInvitation(match);
       return this.formatEvent(nodeContent);

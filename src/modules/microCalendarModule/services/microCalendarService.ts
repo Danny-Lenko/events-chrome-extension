@@ -51,23 +51,19 @@ export class MicroCalendarService implements MicroCalendarInterface {
       const localEvents = [];
       this.events = [];
 
-      Array.from(document.getElementsByClassName('Ki1Xx')).forEach(
-         (element) => {
-            const info =
-               element.children[0] && element.children[1]
-                  ? element.children[0].ariaLabel ||
-                    element.children[1].ariaLabel
-                  : null;
-
-            if (!info) return;
-
-            const content = this.FormattingService.editLikeGoogleApiWants(info);
-
-            if (!content) return;
-            this.events.push(content);
-            localEvents.push(content);
-         },
+      const elements = document.querySelectorAll(
+         '[role="button"][title][aria-label^="event "]',
       );
+
+      for (const element of Array.from(elements)) {
+         const content = this.FormattingService.editLikeGoogleApiWants(
+            element.ariaLabel,
+         );
+
+         if (!content) return;
+         this.events.push(content);
+         localEvents.push(content);
+      }
 
       return localEvents;
    }

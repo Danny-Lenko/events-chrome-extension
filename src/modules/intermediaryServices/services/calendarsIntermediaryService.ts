@@ -1,6 +1,10 @@
 import { Event } from '../types/intermediaryTypes';
 import { CalendarIntermediaryInterface } from '../types/intermediaryInterfaces';
 
+const baseUrl = process.env.BACKEND_URL;
+
+console.log('BASEURL:', baseUrl);
+
 export class CalendarIntermediaryService
    implements CalendarIntermediaryInterface
 {
@@ -11,7 +15,7 @@ export class CalendarIntermediaryService
 
       const reqBody = JSON.stringify(events);
       try {
-         const res = await fetch('http://localhost:8080/add-events', {
+         const res = await fetch(`${baseUrl}/add-events`, {
             method: 'POST',
             headers: {
                'Content-Type': 'application/JSON',
@@ -32,7 +36,7 @@ export class CalendarIntermediaryService
       const reqBody = JSON.stringify(event);
 
       try {
-         const res = await fetch('http://localhost:8080/delete-event', {
+         const res = await fetch(`${baseUrl}/delete-event`, {
             method: 'DELETE',
             headers: {
                'Content-Type': 'application/JSON',

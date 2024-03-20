@@ -37,18 +37,26 @@ export class MicroEmailService implements MicroEmailInterface {
    }
 
    private observer = new MutationObserver(async () => {
+      // Seems not to be a valid class anymore
+      // Need to change approach
       const mails = document.getElementsByClassName('hcptT');
       const loadingOverlay = document.getElementById('loading-overlay');
 
-      if (!mails[0] && this.executionIsAllowed) {
-         this.handleNoMails(mails);
-      }
+      // console.log('MAILS:', mails);
 
-      if (this.ProcessMailsService.confirmIsEmpty(mails)) {
-         loadingOverlay?.remove();
-      }
 
-      this.ProcessMailsService.filterMails(mails, this.filterString);
+      // The service needs further development
+      // Its mails' class changes oftentimes
+
+      // if (!mails[0] && this.executionIsAllowed) {
+      //    this.handleNoMails(mails);
+      // }
+
+      // if (this.ProcessMailsService.confirmIsEmpty(mails)) {
+      //    loadingOverlay?.remove();
+      // }
+
+      // this.ProcessMailsService.filterMails(mails, this.filterString);
    });
 
    private handleNoMails(mails) {

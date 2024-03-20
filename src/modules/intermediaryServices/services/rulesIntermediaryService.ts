@@ -1,6 +1,8 @@
 import { RulesIntermediaryInterface } from '../types/intermediaryInterfaces';
 import mockRules from '../../../../config.json';
 
+const baseUrl = process.env.BACKEND_URL;
+
 export class RulesIntermediaryService implements RulesIntermediaryInterface {
    private fixedIV;
 
@@ -21,7 +23,7 @@ export class RulesIntermediaryService implements RulesIntermediaryInterface {
       this.fixedIV = await this.generateIV();
 
       try {
-         const response = await fetch('http://localhost:8080/rules');
+         const response = await fetch(`${baseUrl}/rules`);
          if (!response.ok) {
             throw new Error('Request failed with status: ' + response.status);
          }

@@ -1,5 +1,5 @@
 import { ModuleDecorator } from '../../core/decorators/ModuleDecorator';
-import { AllInterfaces } from '../googleCalendarModule/microCalendarInterfaces';
+import { AllInterfaces } from './types/microCalendarInterfaces';
 import { MicroCalendarService } from './services/microCalendarService';
 
 const microCalendarService = new MicroCalendarService();
